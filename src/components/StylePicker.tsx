@@ -11,9 +11,9 @@ interface StylePickerProps {
 
 const CATEGORIES: string[] = [
   'All',
+  'Behind the Person',
   'Popular',
   'Real Estate',
-  'Behind the Person',
   'Playful',
   'Multiline',
   'Dynamic',
@@ -32,8 +32,15 @@ export const StylePicker: React.FC<StylePickerProps> = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
+  // Sort styles so 'Behind the Person' templates appear at the top when 'All' is selected
+  const allStylesSorted = [...CAPTION_STYLES].sort((a, b) => {
+    if (a.category === 'Behind the Person' && b.category !== 'Behind the Person') return -1;
+    if (a.category !== 'Behind the Person' && b.category === 'Behind the Person') return 1;
+    return 0;
+  });
+
   const filteredStyles = selectedCategory === 'All' 
-    ? CAPTION_STYLES 
+    ? allStylesSorted 
     : CAPTION_STYLES.filter(s => s.category === selectedCategory);
 
   return (
@@ -50,7 +57,7 @@ export const StylePicker: React.FC<StylePickerProps> = ({
       {/* Category Tabs */}
       <div className="flex gap-1 overflow-x-auto pb-2 scrollbar-none border-b border-white/5">
         {CATEGORIES.map((cat) => {
-          const isAI = ['Popular', 'Real Estate', 'Behind the Person', 'Playful', 'Multiline', 'Editorial'].includes(cat);
+          const isAI = ['Behind the Person', 'Popular', 'Real Estate', 'Playful', 'Multiline', 'Editorial'].includes(cat);
           const isActive = selectedCategory === cat;
           return (
             <button
@@ -62,7 +69,7 @@ export const StylePicker: React.FC<StylePickerProps> = ({
                   : 'text-white/50 hover:text-white/90'
               }`}
             >
-              <span>{cat}</span>
+              <span>{cat === 'Behind the Person' ? 'Behind the Person 🎭' : cat}</span>
               {isAI && (
                 <span className="rounded bg-brownie-500/20 text-brownie-400 text-[9px] font-mono font-extrabold px-1 py-0.2">
                   AI
@@ -76,53 +83,75 @@ export const StylePicker: React.FC<StylePickerProps> = ({
         })}
       </div>
 
-      {/* Preset Cards Grid */}
-      <div className="grid grid-cols-2 gap-2.5 mt-3 overflow-y-auto max-h-[420px] pr-1">
+      {/* Preset Visual Cards Grid */}
+      <div className="grid grid-cols-2 gap-3 mt-3 overflow-y-auto max-h-[460px] pr-1">
         {filteredStyles.map((style) => {
           const isSelected = currentStyle.id === style.id;
+          const isBehindPerson = style.category === 'Behind the Person' || style.animationStyle === 'behind-depth';
+
           return (
             <div
               key={style.id}
               onClick={() => onSelectStyle(style)}
-              className={`group relative cursor-pointer overflow-hidden rounded-xl border p-3 transition-all flex flex-col justify-between h-28 ${
+              className={`group relative cursor-pointer overflow-hidden rounded-xl border transition-all flex flex-col justify-between h-36 ${
                 isSelected
-                  ? 'border-brownie-500/60 bg-brownie-500/10 shadow-lg shadow-brownie-500/10 ring-1 ring-brownie-500/50'
-                  : 'border-white/5 bg-[#0A0A0B] hover:border-white/20 hover:bg-[#1C1C1F]'
+                  ? 'border-brownie-500 bg-brownie-500/10 shadow-lg shadow-brownie-500/20 ring-2 ring-brownie-500/50 scale-[1.01]'
+                  : 'border-white/10 bg-[#0A0A0B] hover:border-white/30 hover:bg-[#1C1C1F]'
               }`}
             >
-              {/* Top Header: Badge & Category */}
-              <div className="flex items-center justify-between z-10">
-                <span className="text-[10px] font-medium text-white/50">
-                  {style.category}
-                </span>
-                {style.badgeText && (
-                  <span className="rounded bg-brownie-500 text-black font-extrabold text-[9px] px-1.5 py-0.2">
-                    {style.badgeText}
+              {/* Card Image / Gradient Preview Header */}
+              <div className="relative h-24 w-full bg-gradient-to-br from-zinc-900 via-black to-zinc-950 overflow-hidden flex items-center justify-center p-2">
+                {/* Background Poster Image for 'Behind the Person' 3D depth styles */}
+                {isBehindPerson && (
+                  <div className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity group-hover:opacity-60 transition-opacity" style={{ backgroundImage: `url(${style.posterUrl || '/ai_human.jpg'})` }} />
+                )}
+
+                {/* Subtle Grid overlay for high craft look */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:12px_12px]" />
+
+                {/* Top Badge Overlay */}
+                <div className="absolute top-2 left-2 right-2 flex items-center justify-between z-10">
+                  <span className={`text-[9px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-md border ${
+                    isBehindPerson 
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' 
+                      : 'bg-black/60 text-white/70 border-white/10'
+                  }`}>
+                    {isBehindPerson ? '3D DEPTH' : style.category}
+                  </span>
+                  {style.badgeText && (
+                    <span className="rounded bg-brownie-500 text-black font-extrabold text-[9px] px-1.5 py-0.2 shadow-sm">
+                      {style.badgeText}
+                    </span>
+                  )}
+                </div>
+
+                {/* Styled Sample Typography Preview */}
+                <div className="relative z-10 text-center px-1 max-w-full">
+                  <p
+                    style={{
+                      fontFamily: style.fontFamily,
+                      color: style.primaryColor,
+                      textTransform: style.textTransform || 'none',
+                      textShadow: style.shadow || '0 2px 8px rgba(0,0,0,0.8)'
+                    }}
+                    className="text-sm sm:text-base font-black tracking-wide truncate"
+                  >
+                    {style.name.split(' ')[0]}{' '}
+                    <span style={{ color: style.highlightColor }}>
+                      {style.name.split(' ')[1] || ''}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Footer Title & Active Indicator */}
+              <div className="flex items-center justify-between px-3 py-2 bg-[#141416] border-t border-white/5 z-10">
+                <span className="text-xs font-bold text-white truncate">{style.name}</span>
+                {isSelected && (
+                  <span className="h-4 w-4 rounded-full bg-brownie-500 text-black flex items-center justify-center shrink-0">
+                    <Check className="h-3 w-3 stroke-[3]" />
                   </span>
                 )}
-              </div>
-
-              {/* Center Typography Sample */}
-              <div className="my-auto text-center py-1">
-                <p
-                  style={{
-                    fontFamily: style.fontFamily,
-                    color: style.primaryColor,
-                    textTransform: style.textTransform || 'none'
-                  }}
-                  className="text-base font-black tracking-wide truncate"
-                >
-                  {style.name.split(' ')[0]}{' '}
-                  <span style={{ color: style.highlightColor }}>
-                    {style.name.split(' ')[1] || ''}
-                  </span>
-                </p>
-              </div>
-
-              {/* Bottom Footer: Preset Title & Checkmark */}
-              <div className="flex items-center justify-between pt-1 border-t border-white/5">
-                <span className="text-xs font-bold text-white truncate">{style.name}</span>
-                {isSelected && <Check className="h-3.5 w-3.5 text-brownie-400 shrink-0" />}
               </div>
             </div>
           );

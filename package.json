@@ -2,6 +2,23 @@
   "name": "brownie-ai-studio",
   "private": true,
   "version": "1.0.0",
+  "description": "High-craft AI Short-Form Video & Interactive Caption Studio built with React, TypeScript, and Tailwind CSS",
+  "author": "Vivek Medepalli",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vivekmed18-glitch/Brownie-Ai-Studio.git"
+  },
+  "keywords": [
+    "ai",
+    "video-editor",
+    "short-form",
+    "subtitles",
+    "captions",
+    "descript-alternative",
+    "react",
+    "tailwind-css"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Word } from '../types/studio';
-import { Edit2, Plus, Trash2, Clock, Sparkles, Highlighter } from 'lucide-react';
+import { Edit2, Plus, Trash2, Clock, Sparkles, FileText, Check } from 'lucide-react';
 
 interface TranscriptEditorProps {
   words: Word[];
@@ -10,6 +10,7 @@ interface TranscriptEditorProps {
   onDeleteWord: (id: string) => void;
   onToggleHighlight: (id: string) => void;
   onAddWord: () => void;
+  onSetCustomTranscript?: (text: string) => void;
 }
 
 export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
@@ -19,10 +20,13 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
   onUpdateWord,
   onDeleteWord,
   onToggleHighlight,
-  onAddWord
+  onAddWord,
+  onSetCustomTranscript
 }) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [tempText, setTempText] = useState<string>('');
+  const [showPasteModal, setShowPasteModal] = useState<boolean>(false);
+  const [pasteInput, setPasteInput] = useState<string>('');
 
   const handleStartEdit = (wordObj: Word) => {
     setEditingId(wordObj.id);
@@ -36,6 +40,14 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
     setEditingId(null);
   };
 
+  const handleApplyPastedTranscript = () => {
+    if (pasteInput.trim() && onSetCustomTranscript) {
+      onSetCustomTranscript(pasteInput.trim());
+      setShowPasteModal(false);
+      setPasteInput('');
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-studio-card border border-studio-border rounded-2xl p-4 shadow-xl">
       {/* Header Info */}
@@ -45,17 +57,55 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
             <Sparkles className="h-4 w-4 text-brownie-400" /> Transcript-First Editor
           </h3>
           <p className="text-xs text-studio-muted">
-            Edit the words directly. Timing automatically resyncs!
+            Edit words directly or paste your full clip script!
           </p>
         </div>
 
-        <button
-          onClick={onAddWord}
-          className="flex items-center gap-1 bg-brownie-500/10 hover:bg-brownie-500/20 text-brownie-400 border border-brownie-500/30 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
-        >
-          <Plus className="h-3.5 w-3.5" /> Add Word
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setShowPasteModal(true)}
+            className="flex items-center gap-1 bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+            title="Paste custom video transcript text"
+          >
+            <FileText className="h-3.5 w-3.5 text-brownie-400" /> Paste Script
+          </button>
+
+          <button
+            onClick={onAddWord}
+            className="flex items-center gap-1 bg-brownie-500/10 hover:bg-brownie-500/20 text-brownie-400 border border-brownie-500/30 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" /> Add Word
+          </button>
+        </div>
       </div>
+
+      {/* Modal for pasting custom transcript script */}
+      {showPasteModal && (
+        <div className="mb-3 p-3 bg-studio-surface border border-brownie-500/40 rounded-xl space-y-2">
+          <label className="text-xs font-bold text-white block">Paste Full Video Script / Transcript:</label>
+          <textarea
+            rows={3}
+            value={pasteInput}
+            onChange={(e) => setPasteInput(e.target.value)}
+            placeholder="Type or paste the transcript for your uploaded video here..."
+            className="w-full bg-black/60 border border-white/10 rounded-lg p-2 text-xs text-white outline-none focus:border-brownie-500"
+          />
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={() => setShowPasteModal(false)}
+              className="px-2.5 py-1 text-xs text-white/60 hover:text-white"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleApplyPastedTranscript}
+              className="flex items-center gap-1 bg-brownie-500 text-black font-bold text-xs px-3 py-1.5 rounded-lg shadow"
+            >
+              <Check className="h-3.5 w-3.5" /> Generate Word Chips
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Words Container */}
       <div className="flex-1 overflow-y-auto pr-1 space-y-2 max-h-[500px] scrollbar-thin">

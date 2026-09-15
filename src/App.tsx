@@ -67,6 +67,25 @@ export const App: React.FC = () => {
     setWords([...words, newWordObj]);
   };
 
+  // Convert custom pasted script string into word-level objects with auto timing
+  const handleSetCustomTranscript = (text: string) => {
+    const rawWords = text.trim().split(/\s+/).filter(Boolean);
+    let currentTimePointer = 0.2;
+    const newWordsArr: Word[] = rawWords.map((wStr, i) => {
+      const duration = Math.max(0.25, Math.min(0.6, wStr.length * 0.05));
+      const start = parseFloat(currentTimePointer.toFixed(2));
+      const end = parseFloat((currentTimePointer + duration).toFixed(2));
+      currentTimePointer += duration + 0.05;
+      return {
+        id: `w_custom_${Date.now()}_${i}`,
+        word: wStr,
+        start,
+        end
+      };
+    });
+    setWords(newWordsArr);
+  };
+
   // Export SRT helper
   const handleExportSRT = () => {
     let srtContent = '';
@@ -156,6 +175,7 @@ export const App: React.FC = () => {
                     onDeleteWord={handleDeleteWord}
                     onToggleHighlight={handleToggleHighlight}
                     onAddWord={handleAddWord}
+                    onSetCustomTranscript={handleSetCustomTranscript}
                   />
 
                   {/* Compact Style Swapper */}

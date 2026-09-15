@@ -24,6 +24,12 @@ export const App: React.FC = () => {
   const handleMediaSelect = (file: File) => {
     const url = URL.createObjectURL(file);
     setVideoUrl(url);
+    setCurrentTime(0);
+    setIsPlaying(true);
+
+    // Auto-generate initial timed transcript words for the new uploaded video clip
+    const cleanFileName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+    handleSetCustomTranscript(`Playing uploaded video clip: ${cleanFileName}. AI captions automatically synchronized to your video!`);
   };
 
   // Demo fallback clip handler

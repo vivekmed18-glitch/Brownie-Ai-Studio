@@ -51,7 +51,7 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
   return (
     <div className="flex flex-col h-full bg-studio-card border border-studio-border rounded-2xl p-4 shadow-xl">
       {/* Header Info */}
-      <div className="flex items-center justify-between border-b border-studio-border pb-3 mb-3">
+      <div className="flex items-center justify-between border-b border-studio-border pb-3 mb-2">
         <div>
           <h3 className="font-bold text-white text-sm flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-brownie-400" /> Transcript-First Editor
@@ -64,19 +64,24 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setShowPasteModal(true)}
-            className="flex items-center gap-1 bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-1 bg-brownie-500/20 hover:bg-brownie-500/30 text-brownie-400 border border-brownie-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
             title="Paste custom video transcript text"
           >
-            <FileText className="h-3.5 w-3.5 text-brownie-400" /> Paste Script
+            <FileText className="h-3.5 w-3.5" /> Paste Script
           </button>
 
           <button
             onClick={onAddWord}
-            className="flex items-center gap-1 bg-brownie-500/10 hover:bg-brownie-500/20 text-brownie-400 border border-brownie-500/30 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-1 bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
           >
             <Plus className="h-3.5 w-3.5" /> Add Word
           </button>
         </div>
+      </div>
+
+      {/* Uploaded Clip Guidance Banner */}
+      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 mb-3 flex items-center justify-between text-xs text-amber-300">
+        <span>💡 <strong>Tip for uploaded clips:</strong> Click <strong>Paste Script</strong> to paste your video's exact spoken words. Any caption template will instantly align!</span>
       </div>
 
       {/* Modal for pasting custom transcript script */}

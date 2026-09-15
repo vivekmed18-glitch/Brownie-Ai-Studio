@@ -83,8 +83,24 @@ export const StylePicker: React.FC<StylePickerProps> = ({
         })}
       </div>
 
-      {/* Preset Visual Cards Grid */}
-      <div className="grid grid-cols-2 gap-3 mt-3 overflow-y-auto max-h-[460px] pr-1">
+      {/* Category Header Sub-Description Banner */}
+      <div className="py-2 px-1 border-b border-white/5 mb-3 flex items-center justify-between text-xs">
+        <span className="text-white font-bold flex items-center gap-1.5">
+          {selectedCategory === 'All' ? 'Featured AI Captions' : selectedCategory}
+          <span className="text-[10px] text-brownie-400 font-mono bg-brownie-500/10 border border-brownie-500/20 px-1.5 py-0.2 rounded font-extrabold">AI</span>
+        </span>
+        <span className="text-studio-muted text-[11px]">
+          {selectedCategory === 'Real Estate' && 'Show property prices, listing numbers, and stories with layered captions.'}
+          {selectedCategory === 'Behind the Person' && '3D Depth AI floating text layered behind subject silhouette.'}
+          {selectedCategory === 'Popular' && 'Top viral caption presets used by 10M+ view creators.'}
+          {selectedCategory === 'Playful' && 'Animated organic cursive & bold bouncy lettering.'}
+          {selectedCategory === 'Multiline' && 'Multi-line fluid text blocks for fast commentary.'}
+          {selectedCategory === 'All' && 'Select any template to test live kinetic caption animations.'}
+        </span>
+      </div>
+
+      {/* Vertical 9:16 Preset Cards Grid (Moonshot Style) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 overflow-y-auto max-h-[520px] p-1">
         {filteredStyles.map((style) => {
           const isSelected = currentStyle.id === style.id;
           const isBehindPerson = style.category === 'Behind the Person' || style.animationStyle === 'behind-depth';
@@ -93,65 +109,73 @@ export const StylePicker: React.FC<StylePickerProps> = ({
             <div
               key={style.id}
               onClick={() => onSelectStyle(style)}
-              className={`group relative cursor-pointer overflow-hidden rounded-xl border transition-all flex flex-col justify-between h-36 ${
+              className={`group relative cursor-pointer overflow-hidden rounded-2xl border transition-all aspect-[9/16] h-60 sm:h-64 flex flex-col justify-between p-3 select-none ${
                 isSelected
-                  ? 'border-brownie-500 bg-brownie-500/10 shadow-lg shadow-brownie-500/20 ring-2 ring-brownie-500/50 scale-[1.01]'
-                  : 'border-white/10 bg-[#0A0A0B] hover:border-white/30 hover:bg-[#1C1C1F]'
+                  ? 'border-brownie-500 ring-4 ring-brownie-500/30 shadow-2xl shadow-brownie-500/30 scale-[1.02]'
+                  : 'border-white/10 hover:border-white/40 hover:scale-[1.03] shadow-lg'
               }`}
             >
-              {/* Card Image / Gradient Preview Header */}
-              <div className="relative h-24 w-full bg-gradient-to-br from-zinc-900 via-black to-zinc-950 overflow-hidden flex items-center justify-center p-2">
-                {/* Background Poster Image for 'Behind the Person' 3D depth styles */}
-                {isBehindPerson && (
-                  <div className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity group-hover:opacity-60 transition-opacity" style={{ backgroundImage: `url(${style.posterUrl || '/ai_human.jpg'})` }} />
-                )}
+              {/* Full-Bleed Realistic Background Image Cover */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                style={{ backgroundImage: `url(${style.posterUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop'})` }}
+              />
 
-                {/* Subtle Grid overlay for high craft look */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:12px_12px]" />
+              {/* Dark Gradient Overlay for Caption Contrast */}
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/80" />
 
-                {/* Top Badge Overlay */}
-                <div className="absolute top-2 left-2 right-2 flex items-center justify-between z-10">
-                  <span className={`text-[9px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-md border ${
-                    isBehindPerson 
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' 
-                      : 'bg-black/60 text-white/70 border-white/10'
-                  }`}>
-                    {isBehindPerson ? '3D DEPTH' : style.category}
+              {/* Top-Left Corner Diagonal Ribbon / Badge */}
+              {style.badgeText && (
+                <div className="absolute top-2 left-2 z-20">
+                  <span className="bg-gradient-to-r from-cyan-500 to-teal-400 text-black text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-full shadow-md border border-white/20">
+                    {style.badgeText}
                   </span>
-                  {style.badgeText && (
-                    <span className="rounded bg-brownie-500 text-black font-extrabold text-[9px] px-1.5 py-0.2 shadow-sm">
-                      {style.badgeText}
-                    </span>
-                  )}
                 </div>
+              )}
 
-                {/* Styled Sample Typography Preview */}
-                <div className="relative z-10 text-center px-1 max-w-full">
-                  <p
-                    style={{
-                      fontFamily: style.fontFamily,
-                      color: style.primaryColor,
-                      textTransform: style.textTransform || 'none',
-                      textShadow: style.shadow || '0 2px 8px rgba(0,0,0,0.8)'
-                    }}
-                    className="text-sm sm:text-base font-black tracking-wide truncate"
-                  >
-                    {style.name.split(' ')[0]}{' '}
-                    <span style={{ color: style.highlightColor }}>
-                      {style.name.split(' ')[1] || ''}
-                    </span>
-                  </p>
-                </div>
+              {/* Top-Right Gold Crown / Pro Badge */}
+              <div className="absolute top-2 right-2 z-20">
+                {isBehindPerson ? (
+                  <span className="bg-amber-500/90 text-black text-[10px] font-extrabold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-md">
+                    👑 AI
+                  </span>
+                ) : isSelected ? (
+                  <span className="h-5 w-5 rounded-full bg-brownie-500 text-black flex items-center justify-center shadow-md">
+                    <Check className="h-3.5 w-3.5 stroke-[3]" />
+                  </span>
+                ) : null}
               </div>
 
-              {/* Card Footer Title & Active Indicator */}
-              <div className="flex items-center justify-between px-3 py-2 bg-[#141416] border-t border-white/5 z-10">
-                <span className="text-xs font-bold text-white truncate">{style.name}</span>
-                {isSelected && (
-                  <span className="h-4 w-4 rounded-full bg-brownie-500 text-black flex items-center justify-center shrink-0">
-                    <Check className="h-3 w-3 stroke-[3]" />
+              {/* 3D Depth Cutout Layer Effect for 'Behind the Person' */}
+              {isBehindPerson && (
+                <div 
+                  className="absolute inset-0 bg-cover bg-center pointer-events-none z-10 opacity-70 mix-blend-screen"
+                  style={{ backgroundImage: `url(${style.posterUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop'})` }}
+                />
+              )}
+
+              {/* Center Styled Caption Text Overlay */}
+              <div className="relative z-10 my-auto text-center px-2">
+                <p
+                  style={{
+                    fontFamily: style.fontFamily,
+                    color: style.primaryColor,
+                    textTransform: style.textTransform || 'none',
+                    textShadow: style.shadow || '0 2px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.7)'
+                  }}
+                  className="text-base sm:text-lg font-black tracking-wide leading-tight drop-shadow-lg"
+                >
+                  {style.name.split(' ')[0]}{' '}
+                  <span style={{ color: style.highlightColor }}>
+                    {style.name.split(' ')[1] || ''}
                   </span>
-                )}
+                </p>
+              </div>
+
+              {/* Bottom Footer Title Label */}
+              <div className="relative z-20 text-center pt-2 border-t border-white/10 backdrop-blur-sm bg-black/40 rounded-b-xl -mx-3 -mb-3 p-2">
+                <span className="text-xs font-bold text-white drop-shadow truncate block">{style.name}</span>
+                <span className="text-[10px] text-white/60 font-mono block">{style.category}</span>
               </div>
             </div>
           );

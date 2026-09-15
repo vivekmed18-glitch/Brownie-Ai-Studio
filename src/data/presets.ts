@@ -18,7 +18,8 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'box',
     fontSize: 34,
     positionY: 72,
-    badgeText: 'HOT',
+    badgeText: 'TRENDING',
+    posterUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
     description: 'Big yellow headlines, outlined box highlights, glowing spoken words.'
   },
   {
@@ -35,6 +36,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     fontSize: 30,
     positionY: 76,
     badgeText: 'NEW',
+    posterUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600&auto=format&fit=crop',
     description: 'Clean modern stat highlight with popping green metrics.'
   },
   {
@@ -50,6 +52,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     fontSize: 34,
     positionY: 68,
     badgeText: 'POPULAR',
+    posterUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop',
     description: 'Energetic magenta pulse with bouncy dynamic word entrance.'
   },
   {
@@ -64,6 +67,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'box',
     fontSize: 32,
     positionY: 70,
+    posterUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?q=80&w=600&auto=format&fit=crop',
     description: 'High-visibility black text on vibrant yellow box background.'
   },
   {
@@ -78,6 +82,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'bounce',
     fontSize: 36,
     positionY: 74,
+    posterUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop',
     description: 'Graffiti spray kinetic motion with sharp cyan emphasis.'
   },
   {
@@ -90,6 +95,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'karaoke',
     fontSize: 30,
     positionY: 78,
+    posterUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=600&auto=format&fit=crop',
     description: 'Minimal translucent text with smooth white active word reveal.'
   },
   {
@@ -103,6 +109,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'glow',
     fontSize: 32,
     positionY: 75,
+    posterUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=600&auto=format&fit=crop',
     description: 'Warm sunset gold lighting aesthetics for atmospheric reels.'
   },
   {
@@ -117,6 +124,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'bounce',
     fontSize: 38,
     positionY: 66,
+    posterUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=600&auto=format&fit=crop',
     description: 'Explosive orange sunburst pop effect for high-energy hooks.'
   },
   {
@@ -131,6 +139,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'box',
     fontSize: 32,
     positionY: 72,
+    posterUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop',
     description: 'Electric lime green highlight swipe with dark backdrop.'
   },
   {
@@ -145,6 +154,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'bounce',
     fontSize: 36,
     positionY: 70,
+    posterUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop',
     description: 'Bold red headline pop built for dramatic commentary.'
   },
 
@@ -162,8 +172,8 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'behind-depth',
     fontSize: 44,
     positionY: 48,
-    posterUrl: '/ai_human.jpg',
-    badgeText: 'PRO AI',
+    posterUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop',
+    badgeText: 'TRENDING',
     description: '3D Serif depth typography floating behind speaker silhouette.'
   },
   {
@@ -177,7 +187,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'behind-depth',
     fontSize: 46,
     positionY: 45,
-    posterUrl: '/ai_animal.jpg',
+    posterUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop',
     badgeText: 'PRO AI',
     description: 'Golden script serif floating elegantly behind speaker.'
   },
@@ -192,7 +202,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'behind-depth',
     fontSize: 48,
     positionY: 40,
-    posterUrl: '/ai_human.jpg',
+    posterUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?q=80&w=600&auto=format&fit=crop',
     badgeText: 'PRO AI',
     description: 'Bold white backdrop text placed behind head and shoulders.'
   },
@@ -207,7 +217,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
     animationStyle: 'behind-depth',
     fontSize: 42,
     positionY: 52,
-    posterUrl: '/ai_animal.jpg',
+    posterUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=600&auto=format&fit=crop',
     badgeText: 'PRO AI',
     description: 'Modern clean sans backdrop placed behind talking head.'
   },

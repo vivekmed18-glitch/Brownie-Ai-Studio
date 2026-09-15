@@ -163,7 +163,7 @@ export const StylePicker: React.FC<StylePickerProps> = ({
                     textTransform: style.textTransform || 'none',
                     textShadow: style.shadow || '0 2px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.7)'
                   }}
-                  className="text-base sm:text-lg font-black tracking-wide leading-tight drop-shadow-lg"
+                  className="hover-kinetic-text text-base sm:text-lg font-black tracking-wide leading-tight drop-shadow-lg transition-transform"
                 >
                   {style.name.split(' ')[0]}{' '}
                   <span style={{ color: style.highlightColor }}>

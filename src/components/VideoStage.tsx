@@ -30,6 +30,8 @@ export const VideoStage: React.FC<VideoStageProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const [isMuted, setIsMuted] = React.useState<boolean>(false);
+
   // Sync Video time with parent state
   useEffect(() => {
     if (videoRef.current) {
@@ -38,6 +40,13 @@ export const VideoStage: React.FC<VideoStageProps> = ({
       }
     }
   }, [currentTime]);
+
+  // Sync Video Mute state
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
 
   // Handle Play/Pause sync
   useEffect(() => {
@@ -238,7 +247,6 @@ export const VideoStage: React.FC<VideoStageProps> = ({
             }}
             className="absolute inset-0 h-full w-full object-cover bg-gradient-to-tr from-purple-950 via-zinc-900 to-amber-950"
             playsInline
-            muted
           />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-zinc-900 to-black">
@@ -266,12 +274,20 @@ export const VideoStage: React.FC<VideoStageProps> = ({
       </div>
 
       {/* Playback Controls */}
-      <div className="mt-4 flex items-center gap-4 w-full max-w-[540px] bg-[#0A0A0B] px-4 py-2.5 rounded-xl border border-white/5">
+      <div className="mt-4 flex items-center gap-3 w-full max-w-[540px] bg-[#0A0A0B] px-4 py-2.5 rounded-xl border border-white/5">
         <button
           onClick={onTogglePlay}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-brownie-500 text-black hover:scale-105 transition-transform font-bold shadow-md shadow-brownie-500/20"
         >
           {isPlaying ? <Pause className="h-4 w-4 fill-black" /> : <Play className="h-4 w-4 ml-0.5 fill-black" />}
+        </button>
+
+        <button
+          onClick={() => setIsMuted(!isMuted)}
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-white/80 transition-colors"
+          title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+        >
+          {isMuted ? <VolumeX className="h-4 w-4 text-red-400" /> : <Volume2 className="h-4 w-4 text-brownie-400" />}
         </button>
 
         <div className="flex-1">

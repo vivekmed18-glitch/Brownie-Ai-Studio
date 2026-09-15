@@ -258,18 +258,10 @@ export const VideoStage: React.FC<VideoStageProps> = ({
           className="absolute inset-0 h-full w-full pointer-events-none object-contain z-10"
         />
 
-        {/* 3D Subject Cutout Layer for 'Behind the Person' 3D Depth effect */}
-        {(currentStyle.category === 'Behind the Person' || currentStyle.animationStyle === 'behind-depth') && (
-          <div 
-            className="absolute inset-0 h-full w-full bg-cover bg-center pointer-events-none z-20 mix-blend-screen opacity-85 transition-all duration-300"
-            style={{ backgroundImage: `url(${currentStyle.posterUrl || '/ai_human.jpg'})` }}
-          />
-        )}
-
         {/* Style Tag Overlay */}
         <div className="absolute top-3 left-3 z-30 bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-bold text-brownie-400 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-md">
           <span className="h-1.5 w-1.5 rounded-full bg-brownie-400 animate-ping"></span>
-          {currentStyle.name} {currentStyle.category === 'Behind the Person' ? '🎭 3D Depth' : `(${currentStyle.animationStyle})`}
+          {currentStyle.name} ({currentStyle.animationStyle})
         </div>
       </div>
 

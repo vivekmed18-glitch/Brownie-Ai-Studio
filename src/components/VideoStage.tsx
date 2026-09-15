@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Word, CaptionStyle } from '../types/studio';
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Maximize, Smartphone, Square, Monitor } from 'lucide-react';
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Maximize, Smartphone, Square, Monitor, Eraser } from 'lucide-react';
 
 interface VideoStageProps {
   videoUrl: string | null;
@@ -31,6 +31,7 @@ export const VideoStage: React.FC<VideoStageProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [isMuted, setIsMuted] = React.useState<boolean>(false);
+  const [hideBurnedInCaptions, setHideBurnedInCaptions] = React.useState<boolean>(false);
 
   // Sync Video time with parent state
   useEffect(() => {
@@ -230,6 +231,21 @@ export const VideoStage: React.FC<VideoStageProps> = ({
         >
           <Monitor className="h-3.5 w-3.5" /> 16:9 Landscape
         </button>
+
+        <span className="w-[1px] h-4 bg-white/10 mx-1" />
+
+        <button
+          onClick={() => setHideBurnedInCaptions(!hideBurnedInCaptions)}
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-all ${
+            hideBurnedInCaptions
+              ? 'bg-red-500/20 text-red-400 border border-red-500/40 font-bold'
+              : 'text-white/60 hover:text-white border border-transparent'
+          }`}
+          title="Cover and hide old burned-in subtitles on uploaded video clip"
+        >
+          <Eraser className="h-3.5 w-3.5" />
+          {hideBurnedInCaptions ? 'Old Subtitles Masked' : 'Hide Old Subtitles'}
+        </button>
       </div>
 
       {/* Video Screen Container */}
@@ -256,6 +272,11 @@ export const VideoStage: React.FC<VideoStageProps> = ({
             <p className="text-sm font-semibold text-white">Sample Video Preview Stage</p>
             <p className="text-xs text-studio-muted mt-1">Upload a clip or click sample to test live caption rendering</p>
           </div>
+        )}
+
+        {/* Burned-in Subtitles Cover Mask Layer */}
+        {hideBurnedInCaptions && (
+          <div className="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-black via-black/95 to-transparent z-[5] pointer-events-none transition-all duration-300" />
         )}
 
         {/* Real-time Overlay Canvas */}

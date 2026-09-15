@@ -115,7 +115,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Workspace Stage */}
-      <main className="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-[1600px] 2xl:max-w-[1800px] mx-auto w-full">
         {!videoUrl ? (
           <div className="py-12">
             <MediaUploader

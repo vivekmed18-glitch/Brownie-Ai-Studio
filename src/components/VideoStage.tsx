@@ -179,11 +179,11 @@ export const VideoStage: React.FC<VideoStageProps> = ({
     }
   };
 
-  // Aspect ratio dimensions container mapping
+  // Aspect ratio dimensions container mapping - responsive for mobile through 4K screens
   const aspectClasses = {
-    '9:16': 'w-[320px] h-[568px] sm:w-[360px] sm:h-[640px]',
-    '1:1': 'w-[360px] h-[360px] sm:w-[450px] sm:h-[450px]',
-    '16:9': 'w-[480px] h-[270px] sm:w-[600px] sm:h-[337px]'
+    '9:16': 'w-full max-w-[320px] sm:max-w-[360px] md:max-w-[400px] lg:max-w-[460px] xl:max-w-[500px] 2xl:max-w-[540px] aspect-[9/16]',
+    '1:1': 'w-full max-w-[340px] sm:max-w-[420px] md:max-w-[480px] lg:max-w-[540px] xl:max-w-[600px] aspect-square',
+    '16:9': 'w-full max-w-[460px] sm:max-w-[580px] md:max-w-[680px] lg:max-w-[800px] xl:max-w-[920px] aspect-video'
   };
 
   return (
@@ -266,7 +266,7 @@ export const VideoStage: React.FC<VideoStageProps> = ({
       </div>
 
       {/* Playback Controls */}
-      <div className="mt-4 flex items-center gap-4 w-full max-w-md bg-[#0A0A0B] px-4 py-2.5 rounded-xl border border-white/5">
+      <div className="mt-4 flex items-center gap-4 w-full max-w-[540px] bg-[#0A0A0B] px-4 py-2.5 rounded-xl border border-white/5">
         <button
           onClick={onTogglePlay}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-brownie-500 text-black hover:scale-105 transition-transform font-bold shadow-md shadow-brownie-500/20"

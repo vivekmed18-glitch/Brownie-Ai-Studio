@@ -115,13 +115,22 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
       {/* Words Container */}
       <div className="flex-1 overflow-y-auto pr-1 space-y-2 max-h-[500px] scrollbar-thin">
         {words.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-8 text-center bg-[#0A0A0B] rounded-xl border border-dashed border-white/10 space-y-3">
+          <div className="flex flex-col items-center justify-center p-8 text-center bg-[#0A0A0B] rounded-xl border border-dashed border-white/10 space-y-4">
             <Sparkles className="h-8 w-8 text-brownie-400 animate-bounce" />
             <div>
-              <p className="text-sm font-bold text-white">No transcript generated yet</p>
+              <p className="text-sm font-bold text-white">No transcript loaded yet</p>
               <p className="text-xs text-studio-muted mt-1 max-w-sm">
-                Click <strong>⚡ Auto-Transcribe</strong> below the video player, or click <strong>Paste Script</strong> above to sync your video's spoken words!
+                Choose any of the 3 options below to generate sync'd captions for your clip:
               </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+              <button
+                onClick={() => setShowPasteModal(true)}
+                className="flex items-center gap-1.5 bg-brownie-500 text-black font-bold text-xs px-3.5 py-2 rounded-xl shadow-lg hover:scale-105 transition-transform"
+              >
+                <FileText className="h-4 w-4" /> 1. Paste Video Script
+              </button>
             </div>
           </div>
         ) : (

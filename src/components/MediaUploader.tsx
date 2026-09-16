@@ -3,25 +3,40 @@ import { Upload, Video, Music, Sparkles } from 'lucide-react';
 
 interface MediaUploaderProps {
   onMediaSelect: (file: File) => void;
+  onSubtitleSelect?: (file: File) => void;
   onUseDemo: () => void;
 }
 
 export const MediaUploader: React.FC<MediaUploaderProps> = ({
   onMediaSelect,
+  onSubtitleSelect,
   onUseDemo
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const processFiles = (files: FileList | File[]) => {
+    const fileArr = Array.from(files);
+    const mediaFile = fileArr.find(f => f.type.startsWith('video/') || f.type.startsWith('audio/') || f.name.match(/\.(mp4|mov|webm|mp3|wav)$/i));
+    const subFile = fileArr.find(f => f.name.match(/\.(ass|srt|vtt|json)$/i));
+
+    if (mediaFile) {
+      onMediaSelect(mediaFile);
+    }
+    if (subFile && onSubtitleSelect) {
+      onSubtitleSelect(subFile);
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      onMediaSelect(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      processFiles(e.target.files);
     }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      onMediaSelect(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
     }
   };
 
@@ -36,7 +51,8 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         <input
           ref={fileInputRef}
           type="file"
-          accept="video/*,audio/*"
+          multiple
+          accept="video/*,audio/*,.ass,.srt,.vtt,.json"
           onChange={handleFileChange}
           className="hidden"
         />
@@ -46,10 +62,10 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         </div>
 
         <h3 className="mt-4 text-lg font-bold text-white">
-          Drop your video or audio clip here
+          Drop your video clip & subtitle file (.ASS / .SRT) here
         </h3>
         <p className="mt-1 text-xs text-studio-muted">
-          Supports MP4, MOV, WebM, MP3, WAV (Up to 120 minutes)
+          Select clip_01.mp4 and clip_01_subtitles.ass together — brownieAI will auto-sync them!
         </p>
 
         <div className="mt-4 flex items-center justify-center gap-3 text-xs text-studio-muted">

@@ -236,6 +236,7 @@ export const App: React.FC = () => {
           <div className="py-12">
             <MediaUploader
               onMediaSelect={handleMediaSelect}
+              onSubtitleSelect={handleUploadSubtitleFile}
               onUseDemo={handleUseDemo}
             />
           </div>

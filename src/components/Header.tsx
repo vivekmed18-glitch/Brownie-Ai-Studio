@@ -96,13 +96,20 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-2">
           <label className="cursor-pointer inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">
             <Upload className="h-3.5 w-3.5 text-brownie-400" />
-            <span>Upload Clip</span>
+            <span>Upload Video + Subtitles</span>
             <input
               type="file"
-              accept="video/*,audio/*"
+              multiple
+              accept="video/*,audio/*,.ass,.srt,.vtt,.json"
               onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
+                if (e.target.files && e.target.files.length > 0) {
                   onUploadFile(e.target.files[0]);
+                  // Handle multiple files if user uploaded clip + subtitle together
+                  Array.from(e.target.files).forEach((file) => {
+                    if (file.name.match(/\.(ass|srt|vtt|json)$/i) && onUploadSubtitleFile) {
+                      onUploadSubtitleFile(file);
+                    }
+                  });
                 }
               }}
               className="hidden"

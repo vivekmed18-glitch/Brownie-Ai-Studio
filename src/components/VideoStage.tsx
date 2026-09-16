@@ -13,6 +13,7 @@ interface VideoStageProps {
   onTogglePlay: () => void;
   aspectRatio: '9:16' | '1:1' | '16:9';
   setAspectRatio: (ratio: '9:16' | '1:1' | '16:9') => void;
+  onExtractVideoTextTracks?: (words: Word[]) => void;
 }
 
 export const VideoStage: React.FC<VideoStageProps> = ({
@@ -25,13 +26,112 @@ export const VideoStage: React.FC<VideoStageProps> = ({
   onTimeUpdate,
   onTogglePlay,
   aspectRatio,
-  setAspectRatio
+  setAspectRatio,
+  onExtractVideoTextTracks
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [isMuted, setIsMuted] = React.useState<boolean>(false);
   const [hideBurnedInCaptions, setHideBurnedInCaptions] = React.useState<boolean>(false);
+  const [isTranscribing, setIsTranscribing] = React.useState<boolean>(false);
+
+  // Auto-detect and extract embedded subtitle tracks from video file
+  const handleLoadedMetadata = () => {
+    const video = videoRef.current;
+    if (!video || !onExtractVideoTextTracks) return;
+
+    if (video.textTracks && video.textTracks.length > 0) {
+      const track = video.textTracks[0];
+      track.mode = 'hidden';
+      const extractedWords: Word[] = [];
+
+      const processCues = () => {
+        if (track.cues && track.cues.length > 0) {
+          Array.from(track.cues).forEach((cue: any) => {
+            const cleanText = cue.text.replace(/<[^>]+>/g, '').replace(/\\N/gi, ' ').trim();
+            const rawWords = cleanText.split(/\s+/).filter(Boolean);
+            const start = cue.startTime;
+            const end = cue.endTime;
+            const dur = Math.max(0.15, (end - start) / rawWords.length);
+            rawWords.forEach((w: string, idx: number) => {
+              extractedWords.push({
+                id: `w_track_${Date.now()}_${extractedWords.length}`,
+                word: w,
+                start: parseFloat((start + idx * dur).toFixed(2)),
+                end: parseFloat((start + (idx + 1) * dur).toFixed(2))
+              });
+            });
+          });
+          if (extractedWords.length > 0) {
+            onExtractVideoTextTracks(extractedWords);
+          }
+        }
+      };
+
+      if (track.cues && track.cues.length > 0) {
+        processCues();
+      } else {
+        track.oncuechange = processCues;
+      }
+    }
+  };
+
+  // Browser Speech-to-Text Transcriber Engine (Uses built-in browser Web Speech API)
+  const handleStartBrowserSpeechRecognition = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Speech Recognition is supported in Chrome, Edge, and Safari browsers!');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    const recognizedWords: Word[] = [];
+    setIsTranscribing(true);
+
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.muted = false;
+      setIsMuted(false);
+      videoRef.current.play().catch(() => {});
+    }
+
+    recognition.onresult = (event: any) => {
+      let finalTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript + ' ';
+        }
+      }
+
+      if (finalTranscript.trim() && onExtractVideoTextTracks) {
+        const rawWords = finalTranscript.trim().split(/\s+/).filter(Boolean);
+        const vTime = videoRef.current ? videoRef.current.currentTime : 10;
+        const dur = Math.max(0.2, vTime / rawWords.length);
+        const newWords: Word[] = rawWords.map((wStr, i) => ({
+          id: `w_speech_${Date.now()}_${i}`,
+          word: wStr,
+          start: parseFloat((i * dur).toFixed(2)),
+          end: parseFloat(((i + 1) * dur).toFixed(2))
+        }));
+        onExtractVideoTextTracks(newWords);
+      }
+    };
+
+    recognition.onerror = () => {
+      setIsTranscribing(false);
+    };
+
+    recognition.onend = () => {
+      setIsTranscribing(false);
+    };
+
+    recognition.start();
+  };
 
   // Sync Video time with parent state
   useEffect(() => {
@@ -310,6 +410,21 @@ export const VideoStage: React.FC<VideoStageProps> = ({
         >
           {isMuted ? <VolumeX className="h-4 w-4 text-red-400" /> : <Volume2 className="h-4 w-4 text-brownie-400" />}
         </button>
+
+        {onExtractVideoTextTracks && (
+          <button
+            onClick={handleStartBrowserSpeechRecognition}
+            disabled={isTranscribing}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+              isTranscribing
+                ? 'bg-amber-500/20 text-amber-300 animate-pulse border border-amber-500/40'
+                : 'bg-brownie-500/15 text-brownie-400 hover:bg-brownie-500/25 border border-brownie-500/30'
+            }`}
+            title="Transcribe speech in video live using AI Speech-to-Text"
+          >
+            {isTranscribing ? '⚡ Listening...' : '⚡ Auto-Transcribe'}
+          </button>
+        )}
 
         <div className="flex-1">
           <input

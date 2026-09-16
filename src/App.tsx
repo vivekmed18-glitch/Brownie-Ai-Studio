@@ -257,6 +257,7 @@ export const App: React.FC = () => {
                     onTogglePlay={() => setIsPlaying(!isPlaying)}
                     aspectRatio={aspectRatio}
                     setAspectRatio={setAspectRatio}
+                    onExtractVideoTextTracks={(extractedWords) => setWords(extractedWords)}
                   />
                 </div>
 
@@ -307,6 +308,7 @@ export const App: React.FC = () => {
                     onTogglePlay={() => setIsPlaying(!isPlaying)}
                     aspectRatio={aspectRatio}
                     setAspectRatio={setAspectRatio}
+                    onExtractVideoTextTracks={(extractedWords) => setWords(extractedWords)}
                   />
                 </div>
 

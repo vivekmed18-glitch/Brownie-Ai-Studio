@@ -106,26 +106,40 @@ export const App: React.FC = () => {
       let currentEnd = 0;
 
       lines.forEach((line) => {
-        // Match SRT timing: 00:00:01,200 --> 00:00:03,500
-        const srtMatch = line.match(/(\d{2}):(\d{2}):(\d{2})[,.](\d{2,3})\s*-->\s*(\d{2}):(\d{2}):(\d{2})[,.](\d{2,3})/);
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('[') || trimmed.startsWith('Format:') || trimmed.startsWith('Style:')) {
+          return; // Skip ASS headers and section blocks
+        }
+
+        // Match SRT timing line: 00:00:01,200 --> 00:00:03,500
+        const srtMatch = trimmed.match(/(\d{2}):(\d{2}):(\d{2})[,.](\d{2,3})\s*-->\s*(\d{2}):(\d{2}):(\d{2})[,.](\d{2,3})/);
         if (srtMatch) {
           currentStart = parseInt(srtMatch[1])*3600 + parseInt(srtMatch[2])*60 + parseInt(srtMatch[3]) + parseInt(srtMatch[4])/1000;
           currentEnd = parseInt(srtMatch[5])*3600 + parseInt(srtMatch[6])*60 + parseInt(srtMatch[7]) + parseInt(srtMatch[8])/1000;
           return;
         }
 
-        // Match ASS timing line: Dialogue: 0,0:00:01.20,0:00:03.50,Default,,0,0,0,,Text...
-        const assMatch = line.match(/Dialogue:\s*[^,]+,(\d+:\d{2}:\d{2}\.\d+),(\d+:\d{2}:\d{2}\.\d+),(.*)/);
+        // Match ASS Dialogue line: Dialogue: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text...
+        const assMatch = trimmed.match(/^Dialogue:\s*[^,]+,([^,]+),([^,]+),[^,]*?,[^,]*?,[^,]*?,[^,]*?,[^,]*?,[^,]*?,(.*)$/i);
         if (assMatch) {
           const parseAssTime = (tStr: string) => {
-            const parts = tStr.split(/[:.]/);
+            const parts = tStr.trim().split(/[:.]/);
             return parseInt(parts[0])*3600 + parseInt(parts[1])*60 + parseInt(parts[2]) + (parseInt(parts[3]) || 0)/100;
           };
           currentStart = parseAssTime(assMatch[1]);
           currentEnd = parseAssTime(assMatch[2]);
-          const textRaw = assMatch[3].replace(/\{[^}]+\}/g, '').replace(/\\N/g, ' ').trim();
-          const rawWords = textRaw.split(/\s+/).filter(Boolean);
-          if (rawWords.length > 0) {
+          const textRaw = assMatch[3]
+            .replace(/\{[^}]+\}/g, '')
+            .replace(/\\N/gi, ' ')
+            .replace(/\\n/gi, ' ')
+            .trim();
+
+          const rawWords = textRaw
+            .split(/\s+/)
+            .map(w => w.replace(/^[^a-zA-Z0-9'"]+|[^a-zA-Z0-9'"]+$/g, ''))
+            .filter(w => w.length > 0 && !/^\d+$/.test(w) && !/^SUB/i.test(w));
+
+          if (rawWords.length > 0 && currentEnd > currentStart) {
             const dur = Math.max(0.15, (currentEnd - currentStart) / rawWords.length);
             rawWords.forEach((w, idx) => {
               wordsResult.push({
@@ -140,9 +154,13 @@ export const App: React.FC = () => {
         }
 
         // Process SRT text line (if not timestamp or line index)
-        if (line.trim() && !/^\d+$/.test(line.trim()) && currentEnd > currentStart) {
-          const cleanText = line.replace(/<[^>]+>/g, '').trim();
-          const rawWords = cleanText.split(/\s+/).filter(Boolean);
+        if (trimmed && !/^\d+$/.test(trimmed) && currentEnd > currentStart) {
+          const cleanText = trimmed.replace(/<[^>]+>/g, '').trim();
+          const rawWords = cleanText
+            .split(/\s+/)
+            .map(w => w.replace(/^[^a-zA-Z0-9'"]+|[^a-zA-Z0-9'"]+$/g, ''))
+            .filter(w => w.length > 0 && !/^\d+$/.test(w));
+
           if (rawWords.length > 0) {
             const dur = Math.max(0.15, (currentEnd - currentStart) / rawWords.length);
             rawWords.forEach((w, idx) => {

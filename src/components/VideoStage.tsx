@@ -354,6 +354,8 @@ export const VideoStage: React.FC<VideoStageProps> = ({
           <video
             ref={videoRef}
             src={videoUrl}
+            onLoadedMetadata={handleLoadedMetadata}
+            onLoadedData={handleLoadedMetadata}
             onTimeUpdate={handleTimeUpdate}
             onError={() => {
               // Fallback to secondary sample video if primary fails to load

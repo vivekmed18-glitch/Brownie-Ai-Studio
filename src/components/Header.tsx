@@ -7,6 +7,7 @@ interface HeaderProps {
   onExportVideo: () => void;
   onExportSRT: () => void;
   onUploadFile: (file: File) => void;
+  onUploadSubtitleFile?: (file: File) => void;
   isExporting: boolean;
 }
 
@@ -16,6 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
   onExportVideo,
   onExportSRT,
   onUploadFile,
+  onUploadSubtitleFile,
   isExporting
 }) => {
   return (
@@ -106,6 +108,23 @@ export const Header: React.FC<HeaderProps> = ({
               className="hidden"
             />
           </label>
+
+          {onUploadSubtitleFile && (
+            <label className="cursor-pointer inline-flex items-center gap-1.5 rounded-lg border border-brownie-500/30 bg-brownie-500/10 px-3 py-1.5 text-xs font-bold text-brownie-400 transition-colors hover:bg-brownie-500/20">
+              <Upload className="h-3.5 w-3.5" />
+              <span>Upload .ASS/.SRT</span>
+              <input
+                type="file"
+                accept=".ass,.srt,.vtt,.json"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    onUploadSubtitleFile(e.target.files[0]);
+                  }
+                }}
+                className="hidden"
+              />
+            </label>
+          )}
 
           <button
             onClick={onExportSRT}

@@ -100,18 +100,19 @@ export const VideoStage: React.FC<VideoStageProps> = ({
       videoRef.current.play().catch(() => {});
     }
 
+    let fullTranscriptText = '';
+
     recognition.onresult = (event: any) => {
-      let finalTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript + ' ';
-        }
+      let currentResultText = '';
+      for (let i = 0; i < event.results.length; ++i) {
+        currentResultText += event.results[i][0].transcript + ' ';
       }
 
-      if (finalTranscript.trim() && onExtractVideoTextTracks) {
-        const rawWords = finalTranscript.trim().split(/\s+/).filter(Boolean);
-        const vTime = videoRef.current ? videoRef.current.currentTime : 10;
-        const dur = Math.max(0.2, vTime / rawWords.length);
+      if (currentResultText.trim() && onExtractVideoTextTracks) {
+        fullTranscriptText = currentResultText.trim();
+        const rawWords = fullTranscriptText.split(/\s+/).filter(Boolean);
+        const videoDuration = videoRef.current?.duration || 10;
+        const dur = Math.max(0.18, videoDuration / rawWords.length);
         const newWords: Word[] = rawWords.map((wStr, i) => ({
           id: `w_speech_${Date.now()}_${i}`,
           word: wStr,
@@ -122,8 +123,12 @@ export const VideoStage: React.FC<VideoStageProps> = ({
       }
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (err: any) => {
+      console.warn('Speech recognition status:', err.error);
       setIsTranscribing(false);
+      if (err.error === 'not-allowed') {
+        alert('Microphone permission is required for browser speech-to-text. Please allow microphone access in your browser site settings!');
+      }
     };
 
     recognition.onend = () => {

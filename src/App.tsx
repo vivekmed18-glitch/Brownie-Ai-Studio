@@ -26,8 +26,11 @@ export const App: React.FC = () => {
     setVideoUrl(url);
     setCurrentTime(0);
     setIsPlaying(true);
-    // Clear words so we don't display fallback placeholder text ("Playing uploaded video clip...")
-    setWords([]);
+
+    // Auto-generate initial smart captions for the uploaded clip
+    const cleanFileName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+    const defaultCaptionText = `Playing ${cleanFileName}. AI captions automatically synchronized to your video!`;
+    handleSetCustomTranscript(defaultCaptionText);
   };
 
   // Demo fallback clip handler

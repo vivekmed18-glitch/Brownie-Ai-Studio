@@ -5,6 +5,7 @@ export interface Word {
   end: number;   // seconds
   highlightColor?: string;
   isCustomEmphasis?: boolean;
+  customEmoji?: string;
 }
 
 export type Category = 
@@ -41,6 +42,7 @@ export interface CaptionStyle {
   posterUrl?: string;
   badgeText?: string;
   description: string;
+  showEmoji?: boolean;
 }
 
 export interface AIHook {

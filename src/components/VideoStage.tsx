@@ -154,16 +154,21 @@ export const VideoStage: React.FC<VideoStageProps> = ({
     }
   }, [isMuted]);
 
-  // Handle Play/Pause sync
-  useEffect(() => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.play().catch(() => {});
-      } else {
-        videoRef.current.pause();
-      }
-    }
-  }, [isPlaying]);
+// Keyword-to-Emoji sentiment dictionary for auto emoji placement above active words
+const EMOJI_MAP: Record<string, string> = {
+  money: '💰', cash: '💸', dollar: '💵', rich: '🤑', business: '💼', sales: '📈', profit: '🚀',
+  fire: '🔥', hot: '🔥', lit: '🔥', cool: '😎', genius: '🧠', brain: '🧠', think: '💡', idea: '💡',
+  secret: '🤫', magic: '✨', star: '⭐', win: '🏆', winner: '🥇', king: '👑', target: '🎯',
+  time: '⏰', clock: '⏳', fast: '⚡', speed: '⚡', power: '⚡', bomb: '💣', boom: '💥',
+  stop: '🛑', warning: '⚠️', danger: '🚨', love: '❤️', heart: '❤️', happy: '😄', laugh: '😂',
+  sad: '😢', shocked: '😱', wow: '😲', party: '🎉', celebrate: '🥳', phone: '📱', video: '🎥',
+  code: '💻', tech: '🤖', ai: '🤖', bot: '🤖', music: '🎵', song: '🎧', speak: '🗣️'
+};
+
+const getWordEmoji = (wordStr: string): string | null => {
+  const clean = wordStr.toLowerCase().replace(/[^a-z]/g, '');
+  return EMOJI_MAP[clean] || null;
+};
 
   // Canvas Real-Time Caption Renderer
   useEffect(() => {
@@ -272,6 +277,20 @@ export const VideoStage: React.FC<VideoStageProps> = ({
           }
 
           ctx.fillText(wordText, currentX + wordWidth / 2, posY);
+
+          // Render Animated Emoji above active word (if style enabled or matched emoji exists)
+          const wordEmoji = w.customEmoji || getWordEmoji(w.word);
+          if (wordEmoji && (isActive || currentStyle.showEmoji)) {
+            ctx.save();
+            const emojiSize = Math.round(fontScale * 0.9);
+            ctx.font = `${emojiSize}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            const emojiY = posY - fontScale / 2 - 6;
+            ctx.fillText(wordEmoji, currentX + wordWidth / 2, emojiY);
+            ctx.restore();
+          }
+
           ctx.restore();
 
           currentX += wordWidth;

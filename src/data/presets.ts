@@ -5,6 +5,43 @@ export const CAPTION_STYLES: CaptionStyle[] = [
   // 1. POPULAR (Top Creator Standards)
   // ==========================================
   {
+    id: 'hormozi-bold',
+    name: 'Hormozi Bold',
+    category: 'Popular',
+    fontFamily: 'Impact, Montserrat, sans-serif',
+    primaryColor: '#FFFFFF',
+    highlightColor: '#22C55E',
+    strokeColor: '#000000',
+    strokeWidth: 6,
+    textTransform: 'uppercase',
+    animationStyle: 'bounce',
+    fontSize: 38,
+    positionY: 70,
+    badgeText: 'VIRAL',
+    showEmoji: true,
+    posterUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop',
+    description: 'Alex Hormozi style: Thick black outlines, neon green spoken word pop & auto emojis.'
+  },
+  {
+    id: 'mrbeast-pop',
+    name: 'MrBeast Pop',
+    category: 'Popular',
+    fontFamily: 'Montserrat, sans-serif',
+    primaryColor: '#FFFFFF',
+    highlightColor: '#FACC15',
+    strokeColor: '#000000',
+    strokeWidth: 5,
+    shadow: '0 4px 16px rgba(250,204,21,0.6)',
+    textTransform: 'uppercase',
+    animationStyle: 'bounce',
+    fontSize: 36,
+    positionY: 68,
+    badgeText: 'HOT',
+    showEmoji: true,
+    posterUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
+    description: 'MrBeast style: Bright yellow glowing active word pop with energetic auto emojis.'
+  },
+  {
     id: 'agent-story',
     name: 'Agent Story',
     category: 'Popular',

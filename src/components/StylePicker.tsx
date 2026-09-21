@@ -188,7 +188,7 @@ export const StylePicker: React.FC<StylePickerProps> = ({
           <Sliders className="h-3.5 w-3.5 text-brownie-400" /> Fine-Tune Active Style
         </h4>
 
-        <div className="grid grid-cols-2 gap-3 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           <div>
             <label className="text-white/50 text-[10px] font-mono font-medium block mb-1">
               Font Size ({currentStyle.fontSize}px)
@@ -205,6 +205,20 @@ export const StylePicker: React.FC<StylePickerProps> = ({
 
           <div>
             <label className="text-white/50 text-[10px] font-mono font-medium block mb-1">
+              Text Stroke ({currentStyle.strokeWidth || 0}px)
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="10"
+              value={currentStyle.strokeWidth || 0}
+              onChange={(e) => onUpdateStyleParams({ strokeWidth: parseInt(e.target.value), strokeColor: currentStyle.strokeColor || '#000000' })}
+              className="w-full accent-brownie-500 h-1 bg-white/10 rounded cursor-pointer"
+            />
+          </div>
+
+          <div>
+            <label className="text-white/50 text-[10px] font-mono font-medium block mb-1">
               Vertical Position ({currentStyle.positionY}%)
             </label>
             <input
@@ -214,6 +228,43 @@ export const StylePicker: React.FC<StylePickerProps> = ({
               value={currentStyle.positionY}
               onChange={(e) => onUpdateStyleParams({ positionY: parseInt(e.target.value) })}
               className="w-full accent-brownie-500 h-1 bg-white/10 rounded cursor-pointer"
+            />
+          </div>
+
+          <div className="flex items-center justify-between pt-3">
+            <label className="text-white/70 text-xs font-bold flex items-center gap-1.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={!!currentStyle.showEmoji}
+                onChange={(e) => onUpdateStyleParams({ showEmoji: e.target.checked })}
+                className="accent-brownie-500 h-3.5 w-3.5 rounded cursor-pointer"
+              />
+              Auto Emojis ✨
+            </label>
+          </div>
+        </div>
+
+        {/* Color Accent Pickers */}
+        <div className="flex items-center gap-4 text-xs pt-1">
+          <div className="flex items-center gap-2">
+            <span className="text-white/50 text-[10px] font-mono">Active Word:</span>
+            <input
+              type="color"
+              value={currentStyle.highlightColor.startsWith('#') ? currentStyle.highlightColor : '#FACC15'}
+              onChange={(e) => onUpdateStyleParams({ highlightColor: e.target.value })}
+              className="h-6 w-8 bg-transparent cursor-pointer rounded border border-white/20"
+              title="Change active word highlight color"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-white/50 text-[10px] font-mono">Base Text:</span>
+            <input
+              type="color"
+              value={currentStyle.primaryColor.startsWith('#') ? currentStyle.primaryColor : '#FFFFFF'}
+              onChange={(e) => onUpdateStyleParams({ primaryColor: e.target.value })}
+              className="h-6 w-8 bg-transparent cursor-pointer rounded border border-white/20"
+              title="Change base text color"
             />
           </div>
         </div>

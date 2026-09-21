@@ -129,8 +129,17 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
                 onClick={() => setShowPasteModal(true)}
                 className="flex items-center gap-1.5 bg-brownie-500 text-black font-bold text-xs px-3.5 py-2 rounded-xl shadow-lg hover:scale-105 transition-transform"
               >
-                <FileText className="h-4 w-4" /> 1. Paste Video Script
+                <FileText className="h-4 w-4" /> Paste Video Script
               </button>
+
+              {onSetCustomTranscript && (
+                <button
+                  onClick={() => onSetCustomTranscript("Welcome to Brownie AI Studio! High energy captions synchronized automatically.")}
+                  className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs px-3 py-2 rounded-xl border border-white/10 transition-colors"
+                >
+                  ⚡ Insert Quick Sample Script
+                </button>
+              )}
             </div>
           </div>
         ) : (

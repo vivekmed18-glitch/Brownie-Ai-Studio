@@ -124,10 +124,14 @@ export const VideoStage: React.FC<VideoStageProps> = ({
     };
 
     recognition.onerror = (err: any) => {
-      console.warn('Speech recognition status:', err.error);
+      console.warn('Speech recognition error:', err.error);
       setIsTranscribing(false);
-      if (err.error === 'not-allowed') {
-        alert('Microphone permission is required for browser speech-to-text. Please allow microphone access in your browser site settings!');
+      if (err.error === 'not-allowed' || err.error === 'service-not-allowed') {
+        alert('⚠️ Speech Recognition permission blocked by browser.\n\nFix: Click the lock/tune icon near your browser address bar and allow Microphone access, or use Option 1 (Paste Script) to paste your video lines!');
+      } else if (err.error === 'no-speech') {
+        alert('ℹ️ No speech detected yet. Ensure your device speaker audio is unmuted and playing clearly!');
+      } else {
+        alert(`Speech recognition notice (${err.error}). You can also use Option 1 (Paste Script) to paste your video transcript!`);
       }
     };
 

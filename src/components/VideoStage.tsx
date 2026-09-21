@@ -249,12 +249,22 @@ const getWordEmoji = (wordStr: string): string | null => {
 
           ctx.save();
           
-          // Apply animation styles
+          // Apply all animation styles dynamically across ALL templates
           if (isActive) {
             if (currentStyle.animationStyle === 'bounce') {
               ctx.translate(currentX + wordWidth / 2, posY);
-              ctx.scale(1.15, 1.15);
+              ctx.scale(1.2, 1.2);
               ctx.translate(-(currentX + wordWidth / 2), -posY);
+            } else if (currentStyle.animationStyle === 'glow') {
+              ctx.shadowColor = currentStyle.highlightColor;
+              ctx.shadowBlur = 30;
+            } else if (currentStyle.animationStyle === 'typewriter') {
+              ctx.translate(currentX + wordWidth / 2, posY);
+              ctx.scale(1.08, 1.08);
+              ctx.translate(-(currentX + wordWidth / 2), -posY);
+            } else if (currentStyle.animationStyle === 'behind-depth') {
+              ctx.shadowColor = 'rgba(0,0,0,0.8)';
+              ctx.shadowBlur = 15;
             }
           }
 
@@ -265,13 +275,13 @@ const getWordEmoji = (wordStr: string): string | null => {
             ctx.strokeText(wordText, currentX + wordWidth / 2, posY);
           }
 
-          // Glow Shadow
+          // Shadow Glow
           if (currentStyle.shadow) {
             ctx.shadowColor = currentStyle.highlightColor;
-            ctx.shadowBlur = isActive ? 20 : 0;
+            ctx.shadowBlur = isActive ? 25 : 0;
           }
 
-          // Text Fill Color (Highlight if active or custom emphasis)
+          // Text Fill Color (Highlight active word or custom emphasis)
           if (isActive) {
             ctx.fillStyle = w.highlightColor || currentStyle.highlightColor;
           } else if (w.isCustomEmphasis) {

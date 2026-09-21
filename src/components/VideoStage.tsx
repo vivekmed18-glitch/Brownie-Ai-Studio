@@ -197,13 +197,11 @@ const getWordEmoji = (wordStr: string): string | null => {
         const startIdx = Math.max(0, currentWordIndex - 1);
         const endIdx = Math.min(words.length, currentWordIndex + 3);
         activeChunk = words.slice(startIdx, endIdx);
-      } else {
-        // Fallback: look for closest past phrase
-        const closestWord = words.filter(w => w.start <= currentTime).pop();
-        if (closestWord) {
-          const idx = words.indexOf(closestWord);
-          activeChunk = words.slice(Math.max(0, idx - 1), Math.min(words.length, idx + 2));
-        }
+      } else if (words.length > 0) {
+        // Fallback: look for closest past phrase, or default to first 3 words
+        const closestWord = words.filter(w => w.start <= currentTime).pop() || words[0];
+        const idx = words.indexOf(closestWord);
+        activeChunk = words.slice(Math.max(0, idx), Math.min(words.length, idx + 3));
       }
 
       if (activeChunk.length > 0) {

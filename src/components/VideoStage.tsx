@@ -151,6 +151,17 @@ export const VideoStage: React.FC<VideoStageProps> = ({
     }
   }, [currentTime]);
 
+  // Handle Play/Pause state synchronization with HTML5 video element
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.play().catch(() => {});
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isPlaying]);
+
   // Sync Video Mute state
   useEffect(() => {
     if (videoRef.current) {

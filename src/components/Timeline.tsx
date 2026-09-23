@@ -32,6 +32,36 @@ export const Timeline: React.FC<TimelineProps> = ({
 
   const effectiveDuration = Math.max(duration || 10, words.length > 0 ? words[words.length - 1].end + 1 : 10);
 
+  // Tile caption words across full video duration if words end early
+  const displayWords = React.useMemo(() => {
+    if (words.length === 0) return [];
+    const lastWordEnd = words[words.length - 1].end;
+    if (lastWordEnd >= effectiveDuration * 0.85 || effectiveDuration <= 10) {
+      return words;
+    }
+
+    const tiled: Word[] = [];
+    const span = Math.max(1, lastWordEnd + 0.5);
+    let offset = 0;
+    let counter = 0;
+    while (offset < effectiveDuration && counter < 500) {
+      for (const w of words) {
+        const start = w.start + offset;
+        const end = w.end + offset;
+        if (start < effectiveDuration) {
+          tiled.push({
+            ...w,
+            id: `${w.id}_tile_${counter++}`,
+            start: parseFloat(start.toFixed(2)),
+            end: parseFloat(Math.min(effectiveDuration, end).toFixed(2))
+          });
+        }
+      }
+      offset += span;
+    }
+    return tiled;
+  }, [words, effectiveDuration]);
+
   // Recommended Shorts / Reels Clipping Intervals
   const CLIP_PRESETS = [
     { label: '⚡ Viral Hook (0-5s)', start: 0, end: 5 },
@@ -157,7 +187,7 @@ export const Timeline: React.FC<TimelineProps> = ({
 
           {/* Track 1: Subtitle / Word Caption Chips Track */}
           <div className="absolute top-2 inset-x-0 h-10 px-2 flex items-center pointer-events-none">
-            {words.map((w) => {
+            {displayWords.map((w) => {
               const leftPct = (w.start / effectiveDuration) * 100;
               const widthPct = Math.max(3, ((w.end - w.start) / effectiveDuration) * 100);
               const isActive = currentTime >= w.start && currentTime <= w.end;

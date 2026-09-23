@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Word } from '../types/studio';
-import { Edit2, Plus, Trash2, Sparkles, FileText, Check, Search } from 'lucide-react';
+import { Word, CaptionStyle } from '../types/studio';
+import { Edit2, Plus, Trash2, Sparkles, FileText, Check, Search, Layers } from 'lucide-react';
 
 interface TranscriptEditorProps {
   words: Word[];
@@ -11,6 +11,8 @@ interface TranscriptEditorProps {
   onToggleHighlight: (id: string) => void;
   onAddWord: () => void;
   onSetCustomTranscript?: (text: string) => void;
+  currentStyle?: CaptionStyle;
+  onOpenStylePicker?: () => void;
 }
 
 export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
@@ -21,7 +23,9 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
   onDeleteWord,
   onToggleHighlight,
   onAddWord,
-  onSetCustomTranscript
+  onSetCustomTranscript,
+  currentStyle,
+  onOpenStylePicker
 }) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [tempText, setTempText] = useState<string>('');
@@ -83,6 +87,25 @@ export const TranscriptEditor: React.FC<TranscriptEditorProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Active Style Preset Top Banner */}
+      {currentStyle && (
+        <div className="flex items-center justify-between bg-black/50 border border-white/10 rounded-lg px-3 py-1.5 mb-3 text-xs">
+          <div className="flex items-center gap-2 overflow-hidden">
+            <span className="h-2 w-2 rounded-full bg-brownie-400 flex-shrink-0 animate-pulse" />
+            <span className="text-white/60 text-[11px]">Active Style:</span>
+            <span className="font-bold text-brownie-400 truncate">{currentStyle.name}</span>
+          </div>
+          {onOpenStylePicker && (
+            <button
+              onClick={onOpenStylePicker}
+              className="text-[11px] text-brownie-400 font-semibold hover:underline flex-shrink-0 ml-2"
+            >
+              Change Style Preset →
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Transcript Search Bar */}
       <div className="relative mb-3">

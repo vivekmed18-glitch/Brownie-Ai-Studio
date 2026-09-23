@@ -68,8 +68,8 @@ export const Timeline: React.FC<TimelineProps> = ({
 
   return (
     <div className="glass-panel p-4 rounded-2xl space-y-3 w-full border border-white/10 shadow-2xl">
-      {/* Timeline Header Toolbar (WhiteStair Style) */}
-      <div className="flex flex-wrap items-center justify-between border-b border-white/5 pb-3 gap-2">
+      {/* Timeline Header Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/5 pb-3 gap-3">
         <div className="flex items-center gap-2">
           <h3 className="font-bold text-white text-sm flex items-center gap-2">
             <Layers className="h-4 w-4 text-brownie-400" /> Multi-Track Timeline & Video Clipper
@@ -80,28 +80,30 @@ export const Timeline: React.FC<TimelineProps> = ({
         </div>
 
         {/* Quick Action Toolbar Buttons */}
-        <div className="flex items-center gap-1.5 overflow-x-auto text-xs">
+        <div className="flex items-center gap-2 text-xs flex-wrap">
           <button
             onClick={onTogglePlay}
-            className="flex items-center gap-1 bg-brownie-500 text-black font-bold px-2.5 py-1 rounded-lg hover:scale-105 transition-transform"
+            className="flex items-center gap-1 bg-brownie-500 text-black font-bold px-3 py-1 rounded-lg hover:scale-105 transition-transform"
           >
             {isPlaying ? <Pause className="h-3.5 w-3.5 fill-black" /> : <Play className="h-3.5 w-3.5 fill-black ml-0.5" />}
             {isPlaying ? 'Pause' : 'Play'}
           </button>
 
-          <span className="w-[1px] h-4 bg-white/10 mx-1" />
+          <span className="hidden sm:inline w-[1px] h-4 bg-white/10 mx-0.5" />
 
           {/* Quick Clip Presets */}
-          <span className="text-white/40 text-[11px] font-mono hidden sm:inline">Rec Clips:</span>
-          {CLIP_PRESETS.map((preset) => (
-            <button
-              key={preset.label}
-              onClick={() => handleApplyPresetTrim(preset.start, preset.end)}
-              className="bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 px-2 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap"
-            >
-              {preset.label}
-            </button>
-          ))}
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-none py-0.5">
+            <span className="text-white/40 text-[11px] font-mono hidden md:inline mr-1">Rec Clips:</span>
+            {CLIP_PRESETS.map((preset) => (
+              <button
+                key={preset.label}
+                onClick={() => handleApplyPresetTrim(preset.start, preset.end)}
+                className="bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap"
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -157,18 +159,18 @@ export const Timeline: React.FC<TimelineProps> = ({
           <div className="absolute top-2 inset-x-0 h-10 px-2 flex items-center pointer-events-none">
             {words.map((w) => {
               const leftPct = (w.start / effectiveDuration) * 100;
-              const widthPct = Math.max(1.5, ((w.end - w.start) / effectiveDuration) * 100);
+              const widthPct = Math.max(3, ((w.end - w.start) / effectiveDuration) * 100);
               const isActive = currentTime >= w.start && currentTime <= w.end;
 
               return (
                 <div
                   key={w.id}
-                  className={`absolute h-7 px-1.5 rounded flex items-center justify-center text-[10px] font-bold border transition-all truncate ${
+                  className={`absolute h-7 px-2 rounded-lg flex items-center justify-center text-[11px] font-bold border transition-all truncate shadow-sm ${
                     isActive
-                      ? 'bg-brownie-500 text-black border-amber-300 shadow-md shadow-brownie-500/30 scale-105 z-10'
-                      : 'bg-white/10 text-white/80 border-white/10'
+                      ? 'bg-brownie-500 text-black border-amber-300 shadow-md shadow-brownie-500/30 font-extrabold z-10 scale-[1.03]'
+                      : 'bg-zinc-800/90 text-white/90 border-white/10 hover:border-white/20'
                   }`}
-                  style={{ left: `${leftPct}%`, width: `${widthPct}%` }}
+                  style={{ left: `${leftPct}%`, width: `${widthPct}%`, minWidth: '42px' }}
                   title={`${w.word} (${w.start}s - ${w.end}s)`}
                 >
                   <span className="truncate">{w.word}</span>

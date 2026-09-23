@@ -6,6 +6,7 @@ import { TranscriptEditor } from './components/TranscriptEditor';
 import { StylePicker } from './components/StylePicker';
 import { ThumbnailMaker } from './components/ThumbnailMaker';
 import { ToolsSuite } from './components/ToolsSuite';
+import { Timeline } from './components/Timeline';
 import { CAPTION_STYLES, INITIAL_WORDS } from './data/presets';
 import { CaptionStyle, Word } from './types/studio';
 import confetti from 'canvas-confetti';
@@ -19,6 +20,7 @@ export const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [aspectRatio, setAspectRatio] = useState<'9:16' | '1:1' | '16:9'>('9:16');
   const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [trimRange, setTrimRange] = useState<{ start: number; end: number }>({ start: 0, end: 10 });
 
   // Handle uploaded video or audio file
   const handleMediaSelect = (file: File) => {
@@ -35,9 +37,18 @@ export const App: React.FC = () => {
 
   // Demo fallback clip handler
   const handleUseDemo = () => {
-    // Local static sample mp4 video clip
     setVideoUrl('/sample.mp4');
     setIsPlaying(true);
+  };
+
+  // Trim video handler
+  const handleTrimVideo = (start: number, end: number) => {
+    setTrimRange({ start, end });
+    // Filter words within trimmed timeframe or adjust relative timing
+    const trimmedWords = words.filter(w => w.start >= start && w.end <= end);
+    if (trimmedWords.length > 0) {
+      setWords(trimmedWords);
+    }
   };
 
   // Transcript editing functions
@@ -120,7 +131,7 @@ export const App: React.FC = () => {
           return;
         }
 
-        // Match ASS Dialogue line: Dialogue: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text...
+        // Match ASS Dialogue line
         const assMatch = trimmed.match(/^Dialogue:\s*[^,]+,([^,]+),([^,]+),[^,]*?,[^,]*?,[^,]*?,[^,]*?,[^,]*?,[^,]*?,(.*)$/i);
         if (assMatch) {
           const parseAssTime = (tStr: string) => {
@@ -154,7 +165,6 @@ export const App: React.FC = () => {
           return;
         }
 
-        // Process SRT text line (if not timestamp or line index)
         if (trimmed && !/^\d+$/.test(trimmed) && currentEnd > currentStart) {
           const cleanText = trimmed.replace(/<[^>]+>/g, '').trim();
           const rawWords = cleanText
@@ -220,7 +230,6 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-studio-bg text-studio-ink">
-      {/* Header */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -231,7 +240,6 @@ export const App: React.FC = () => {
         isExporting={isExporting}
       />
 
-      {/* Main Workspace Stage */}
       <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-[1600px] 2xl:max-w-[1800px] mx-auto w-full">
         {!videoUrl ? (
           <div className="py-12">
@@ -244,54 +252,67 @@ export const App: React.FC = () => {
         ) : (
           <div className="space-y-6">
             {activeTab === 'editor' && (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Left: Video Player Stage */}
-                <div className="lg:col-span-7 flex flex-col justify-center">
-                  <VideoStage
-                    videoUrl={videoUrl}
-                    setVideoUrl={setVideoUrl}
-                    words={words}
-                    currentStyle={currentStyle}
-                    currentTime={currentTime}
-                    isPlaying={isPlaying}
-                    onTimeUpdate={setCurrentTime}
-                    onTogglePlay={() => setIsPlaying(!isPlaying)}
-                    aspectRatio={aspectRatio}
-                    setAspectRatio={setAspectRatio}
-                    onExtractVideoTextTracks={(extractedWords) => setWords(extractedWords)}
-                  />
-                </div>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  {/* Left: Video Player Stage */}
+                  <div className="lg:col-span-7 flex flex-col justify-center">
+                    <VideoStage
+                      videoUrl={videoUrl}
+                      setVideoUrl={setVideoUrl}
+                      words={words}
+                      currentStyle={currentStyle}
+                      currentTime={currentTime}
+                      isPlaying={isPlaying}
+                      onTimeUpdate={setCurrentTime}
+                      onTogglePlay={() => setIsPlaying(!isPlaying)}
+                      aspectRatio={aspectRatio}
+                      setAspectRatio={setAspectRatio}
+                      onExtractVideoTextTracks={(extractedWords) => setWords(extractedWords)}
+                    />
+                  </div>
 
-                {/* Right: Transcript Editor & Quick Style Selector */}
-                <div className="lg:col-span-5 space-y-6">
-                  <TranscriptEditor
-                    words={words}
-                    currentTime={currentTime}
-                    onTimeSeek={(t) => {
-                      setCurrentTime(t);
-                      setIsPlaying(false);
-                    }}
-                    onUpdateWord={handleUpdateWord}
-                    onDeleteWord={handleDeleteWord}
-                    onToggleHighlight={handleToggleHighlight}
-                    onAddWord={handleAddWord}
-                    onSetCustomTranscript={handleSetCustomTranscript}
-                  />
+                  {/* Right: Transcript Editor & Quick Style Selector */}
+                  <div className="lg:col-span-5 space-y-6">
+                    <TranscriptEditor
+                      words={words}
+                      currentTime={currentTime}
+                      onTimeSeek={(t) => {
+                        setCurrentTime(t);
+                        setIsPlaying(false);
+                      }}
+                      onUpdateWord={handleUpdateWord}
+                      onDeleteWord={handleDeleteWord}
+                      onToggleHighlight={handleToggleHighlight}
+                      onAddWord={handleAddWord}
+                      onSetCustomTranscript={handleSetCustomTranscript}
+                    />
 
-                  {/* Compact Style Swapper */}
-                  <div className="glass-panel p-4 rounded-2xl">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-white">Active Style: {currentStyle.name}</span>
-                      <button
-                        onClick={() => setActiveTab('styles')}
-                        className="text-xs text-brownie-400 font-semibold hover:underline"
-                      >
-                        Change Style Preset →
-                      </button>
+                    {/* Compact Style Swapper */}
+                    <div className="glass-panel p-4 rounded-2xl">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold text-white">Active Style: {currentStyle.name}</span>
+                        <button
+                          onClick={() => setActiveTab('styles')}
+                          className="text-xs text-brownie-400 font-semibold hover:underline"
+                        >
+                          Change Style Preset →
+                        </button>
+                      </div>
+                      <p className="text-xs text-studio-muted leading-relaxed">{currentStyle.description}</p>
                     </div>
-                    <p className="text-xs text-studio-muted leading-relaxed">{currentStyle.description}</p>
                   </div>
                 </div>
+
+                {/* Multi-Track Timeline & Clipper Section (WhiteStair Style) */}
+                <Timeline
+                  words={words}
+                  currentTime={currentTime}
+                  duration={words.length > 0 ? words[words.length - 1].end + 1 : 10}
+                  isPlaying={isPlaying}
+                  onTimeSeek={setCurrentTime}
+                  onTogglePlay={() => setIsPlaying(!isPlaying)}
+                  onTrimVideo={handleTrimVideo}
+                />
               </div>
             )}
 

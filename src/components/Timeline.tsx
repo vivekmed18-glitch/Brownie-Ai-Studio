@@ -58,12 +58,12 @@ export const Timeline: React.FC<TimelineProps> = ({
     onTimeSeek(start);
   };
 
-  // Helper to format timestamps: 00:05 / 01:30
+  // Helper to format timestamps: 0:05 / 1:30
   const formatTime = (sec: number) => {
+    if (isNaN(sec) || sec < 0) return '0:00';
     const mins = Math.floor(sec / 60);
     const secs = Math.floor(sec % 60);
-    const ms = Math.floor((sec % 1) * 10);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms}`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -75,7 +75,7 @@ export const Timeline: React.FC<TimelineProps> = ({
             <Layers className="h-4 w-4 text-brownie-400" /> Multi-Track Timeline & Video Clipper
           </h3>
           <span className="text-[10px] text-brownie-400 font-mono bg-brownie-500/10 border border-brownie-500/20 px-2 py-0.5 rounded-full font-bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
-            {effectiveDuration.toFixed(1)}s Total
+            {formatTime(effectiveDuration)} Total
           </span>
         </div>
 
@@ -119,7 +119,7 @@ export const Timeline: React.FC<TimelineProps> = ({
         <div className="flex items-center gap-2">
           <span className="text-white/60 font-mono text-[11px]">Active Cut Range:</span>
           <span className="bg-black/60 px-2 py-0.5 rounded text-brownie-400 font-mono font-bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
-            {trimStart.toFixed(1)}s → {trimEnd.toFixed(1)}s ({(trimEnd - trimStart).toFixed(1)}s clip)
+            {formatTime(trimStart)} → {formatTime(trimEnd)} ({(trimEnd - trimStart).toFixed(1)}s clip)
           </span>
         </div>
       </div>

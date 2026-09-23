@@ -344,15 +344,15 @@ const getWordEmoji = (wordStr: string): string | null => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-5 glass-panel rounded-2xl">
-      {/* Aspect Ratio Toolbar */}
-      <div className="flex items-center gap-1.5 mb-4 bg-[#0A0A0B] px-3 py-1.5 rounded-xl border border-white/5 text-xs">
-        <span className="text-white/40 font-medium mr-1 text-[11px]">Aspect Ratio:</span>
+    <div className="flex flex-col items-center justify-center p-4 bg-[#121419] border border-white/10 rounded-xl shadow-xl">
+      {/* Aspect Ratio & Masking Toolbar */}
+      <div className="flex items-center gap-1.5 mb-3 bg-[#0B0C0F] px-2.5 py-1 rounded-lg border border-white/10 text-xs">
+        <span className="text-white/40 font-medium mr-1 text-[11px]">Format:</span>
         <button
           onClick={() => setAspectRatio('9:16')}
-          className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all ${
+          className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs transition-all ${
             aspectRatio === '9:16'
-              ? 'bg-brownie-500/15 text-brownie-400 border border-brownie-500/40 font-bold'
+              ? 'bg-brownie-500/20 text-brownie-400 border border-brownie-500/40 font-bold'
               : 'text-white/60 hover:text-white border border-transparent'
           }`}
         >
@@ -360,9 +360,9 @@ const getWordEmoji = (wordStr: string): string | null => {
         </button>
         <button
           onClick={() => setAspectRatio('1:1')}
-          className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all ${
+          className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs transition-all ${
             aspectRatio === '1:1'
-              ? 'bg-brownie-500/15 text-brownie-400 border border-brownie-500/40 font-bold'
+              ? 'bg-brownie-500/20 text-brownie-400 border border-brownie-500/40 font-bold'
               : 'text-white/60 hover:text-white border border-transparent'
           }`}
         >
@@ -370,20 +370,20 @@ const getWordEmoji = (wordStr: string): string | null => {
         </button>
         <button
           onClick={() => setAspectRatio('16:9')}
-          className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs transition-all ${
+          className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs transition-all ${
             aspectRatio === '16:9'
-              ? 'bg-brownie-500/15 text-brownie-400 border border-brownie-500/40 font-bold'
+              ? 'bg-brownie-500/20 text-brownie-400 border border-brownie-500/40 font-bold'
               : 'text-white/60 hover:text-white border border-transparent'
           }`}
         >
           <Monitor className="h-3.5 w-3.5" /> 16:9 Landscape
         </button>
 
-        <span className="w-[1px] h-4 bg-white/10 mx-1" />
+        <span className="w-[1px] h-3.5 bg-white/10 mx-1" />
 
         <button
           onClick={() => setHideBurnedInCaptions(!hideBurnedInCaptions)}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-all ${
+          className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs transition-all ${
             hideBurnedInCaptions
               ? 'bg-red-500/20 text-red-400 border border-red-500/40 font-bold'
               : 'text-white/60 hover:text-white border border-transparent'
@@ -391,12 +391,12 @@ const getWordEmoji = (wordStr: string): string | null => {
           title="Cover and hide old burned-in subtitles on uploaded video clip"
         >
           <Eraser className="h-3.5 w-3.5" />
-          {hideBurnedInCaptions ? 'Old Subtitles Masked' : 'Hide Old Subtitles'}
+          {hideBurnedInCaptions ? 'Subtitles Masked' : 'Mask Old Captions'}
         </button>
       </div>
 
       {/* Video Screen Container */}
-      <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl transition-all ${aspectClasses[aspectRatio]}`}>
+      <div className={`relative overflow-hidden rounded-xl border border-white/10 bg-black shadow-2xl transition-all ${aspectClasses[aspectRatio]}`}>
         {videoUrl ? (
           <video
             ref={videoRef}
@@ -405,27 +405,25 @@ const getWordEmoji = (wordStr: string): string | null => {
             onLoadedData={handleLoadedMetadata}
             onTimeUpdate={handleTimeUpdate}
             onError={() => {
-              // Fallback to secondary sample video if primary fails to load
               if (videoUrl?.includes('raw.githubusercontent.com')) {
                 setVideoUrl('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4');
               }
             }}
-            className="absolute inset-0 h-full w-full object-cover bg-gradient-to-tr from-purple-950 via-zinc-900 to-amber-950"
+            className="absolute inset-0 h-full w-full object-cover bg-black"
             playsInline
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-zinc-900 to-black">
-            <div className="h-16 w-16 rounded-full bg-brownie-500/10 flex items-center justify-center text-brownie-400 mb-3 animate-pulse">
-              <Play className="h-8 w-8 ml-1" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-[#0B0C0F]">
+            <div className="h-12 w-12 rounded-full bg-brownie-500/10 flex items-center justify-center text-brownie-400 mb-2">
+              <Play className="h-6 w-6 ml-1" />
             </div>
-            <p className="text-sm font-semibold text-white">Sample Video Preview Stage</p>
-            <p className="text-xs text-studio-muted mt-1">Upload a clip or click sample to test live caption rendering</p>
+            <p className="text-xs font-semibold text-white">Sample Video Preview Stage</p>
           </div>
         )}
 
         {/* Burned-in Subtitles Cover Mask Layer */}
         {hideBurnedInCaptions && (
-          <div className="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-black via-black/95 to-transparent z-[5] pointer-events-none transition-all duration-300" />
+          <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black via-black/95 to-transparent z-[5] pointer-events-none transition-all duration-300" />
         )}
 
         {/* Real-time Overlay Canvas */}
@@ -436,42 +434,41 @@ const getWordEmoji = (wordStr: string): string | null => {
           className="absolute inset-0 h-full w-full pointer-events-none object-contain z-10"
         />
 
-        {/* Style Tag Overlay */}
-        <div className="absolute top-3 left-3 z-30 bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-bold text-brownie-400 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-md">
-          <span className="h-1.5 w-1.5 rounded-full bg-brownie-400 animate-ping"></span>
-          {currentStyle.name} ({currentStyle.animationStyle})
+        {/* Active Preset Tag Overlay */}
+        <div className="absolute top-3 left-3 z-30 bg-black/80 backdrop-blur-md border border-white/10 text-[10px] font-bold text-brownie-400 px-2 py-0.5 rounded-md flex items-center gap-1.5 shadow-md">
+          <span className="h-1.5 w-1.5 rounded-full bg-brownie-400"></span>
+          {currentStyle.name}
         </div>
       </div>
 
-      {/* Playback Controls */}
-      <div className="mt-4 flex items-center gap-3 w-full max-w-[540px] bg-[#0A0A0B] px-4 py-2.5 rounded-xl border border-white/5">
+      {/* Compact Video Playback Controls Bar */}
+      <div className="mt-3 flex items-center gap-2.5 w-full max-w-[540px] bg-[#0B0C0F] px-3 py-2 rounded-xl border border-white/10">
         <button
           onClick={onTogglePlay}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-brownie-500 text-black hover:scale-105 transition-transform font-bold shadow-md shadow-brownie-500/20"
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-brownie-500 text-black hover:scale-105 transition-transform font-bold shadow"
         >
-          {isPlaying ? <Pause className="h-4 w-4 fill-black" /> : <Play className="h-4 w-4 ml-0.5 fill-black" />}
+          {isPlaying ? <Pause className="h-3.5 w-3.5 fill-black" /> : <Play className="h-3.5 w-3.5 ml-0.5 fill-black" />}
         </button>
 
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-white/80 transition-colors"
-          title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+          className="flex h-7 w-7 items-center justify-center rounded-md bg-white/5 hover:bg-white/10 text-white/80 transition-colors"
+          title={isMuted ? 'Unmute' : 'Mute'}
         >
-          {isMuted ? <VolumeX className="h-4 w-4 text-red-400" /> : <Volume2 className="h-4 w-4 text-brownie-400" />}
+          {isMuted ? <VolumeX className="h-3.5 w-3.5 text-red-400" /> : <Volume2 className="h-3.5 w-3.5 text-brownie-400" />}
         </button>
 
         {onExtractVideoTextTracks && (
           <button
             onClick={handleStartBrowserSpeechRecognition}
             disabled={isTranscribing}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold transition-all ${
               isTranscribing
-                ? 'bg-amber-500/20 text-amber-300 animate-pulse border border-amber-500/40'
-                : 'bg-brownie-500/15 text-brownie-400 hover:bg-brownie-500/25 border border-brownie-500/30'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse'
+                : 'bg-brownie-500/10 text-brownie-400 hover:bg-brownie-500/20 border border-brownie-500/30'
             }`}
-            title="Transcribe speech in video live using AI Speech-to-Text"
           >
-            {isTranscribing ? '⚡ Listening...' : '⚡ Auto-Transcribe'}
+            {isTranscribing ? '⚡ Listening...' : '⚡ Speech AI'}
           </button>
         )}
 
@@ -487,7 +484,7 @@ const getWordEmoji = (wordStr: string): string | null => {
           />
         </div>
 
-        <span className="font-mono text-xs text-white/50 min-w-[50px] text-right" style={{ fontVariantNumeric: 'tabular-nums' }}>
+        <span className="font-mono text-[11px] text-white/60 min-w-[44px] text-right" style={{ fontVariantNumeric: 'tabular-nums' }}>
           {currentTime.toFixed(1)}s
         </span>
       </div>

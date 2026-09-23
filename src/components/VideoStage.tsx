@@ -14,6 +14,7 @@ interface VideoStageProps {
   aspectRatio: '9:16' | '1:1' | '16:9';
   setAspectRatio: (ratio: '9:16' | '1:1' | '16:9') => void;
   onExtractVideoTextTracks?: (words: Word[]) => void;
+  onVideoDurationChange?: (duration: number) => void;
 }
 
 export const VideoStage: React.FC<VideoStageProps> = ({
@@ -27,7 +28,8 @@ export const VideoStage: React.FC<VideoStageProps> = ({
   onTogglePlay,
   aspectRatio,
   setAspectRatio,
-  onExtractVideoTextTracks
+  onExtractVideoTextTracks,
+  onVideoDurationChange
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -39,7 +41,13 @@ export const VideoStage: React.FC<VideoStageProps> = ({
   // Auto-detect and extract embedded subtitle tracks from video file
   const handleLoadedMetadata = () => {
     const video = videoRef.current;
-    if (!video || !onExtractVideoTextTracks) return;
+    if (!video) return;
+
+    if (video.duration && !isNaN(video.duration) && video.duration > 0 && onVideoDurationChange) {
+      onVideoDurationChange(video.duration);
+    }
+
+    if (!onExtractVideoTextTracks) return;
 
     if (video.textTracks && video.textTracks.length > 0) {
       const track = video.textTracks[0];
@@ -74,6 +82,15 @@ export const VideoStage: React.FC<VideoStageProps> = ({
       } else {
         track.oncuechange = processCues;
       }
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    onTimeUpdate(video.currentTime);
+    if (video.duration && !isNaN(video.duration) && video.duration > 0 && onVideoDurationChange) {
+      onVideoDurationChange(video.duration);
     }
   };
 
@@ -368,12 +385,6 @@ const getWordEmoji = (wordStr: string): string | null => {
       cancelAnimationFrame(animationFrameId);
     };
   }, [words, currentStyle, currentTime]);
-
-  const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      onTimeUpdate(videoRef.current.currentTime);
-    }
-  };
 
   // Aspect ratio dimensions container mapping - responsive for mobile through 4K screens
   const aspectClasses = {

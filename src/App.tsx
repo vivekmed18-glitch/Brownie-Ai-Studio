@@ -17,6 +17,7 @@ export const App: React.FC = () => {
   const [words, setWords] = useState<Word[]>(INITIAL_WORDS);
   const [currentStyle, setCurrentStyle] = useState<CaptionStyle>(CAPTION_STYLES[0]);
   const [currentTime, setCurrentTime] = useState<number>(0);
+  const [videoDuration, setVideoDuration] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [aspectRatio, setAspectRatio] = useState<'9:16' | '1:1' | '16:9'>('9:16');
   const [isExporting, setIsExporting] = useState<boolean>(false);
@@ -27,6 +28,7 @@ export const App: React.FC = () => {
     const url = URL.createObjectURL(file);
     setVideoUrl(url);
     setCurrentTime(0);
+    setVideoDuration(0);
     setIsPlaying(true);
 
     // Auto-generate initial smart captions for the uploaded clip
@@ -38,6 +40,7 @@ export const App: React.FC = () => {
   // Demo fallback clip handler
   const handleUseDemo = () => {
     setVideoUrl('/sample.mp4');
+    setVideoDuration(0);
     setIsPlaying(true);
   };
 
@@ -268,6 +271,7 @@ export const App: React.FC = () => {
                       aspectRatio={aspectRatio}
                       setAspectRatio={setAspectRatio}
                       onExtractVideoTextTracks={(extractedWords) => setWords(extractedWords)}
+                      onVideoDurationChange={setVideoDuration}
                     />
                   </div>
 
@@ -295,7 +299,7 @@ export const App: React.FC = () => {
                 <Timeline
                   words={words}
                   currentTime={currentTime}
-                  duration={words.length > 0 ? words[words.length - 1].end + 1 : 10}
+                  duration={videoDuration > 0 ? videoDuration : (words.length > 0 ? words[words.length - 1].end + 1 : 10)}
                   isPlaying={isPlaying}
                   onTimeSeek={setCurrentTime}
                   onTogglePlay={() => setIsPlaying(!isPlaying)}

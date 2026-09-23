@@ -69,8 +69,8 @@ export const Timeline: React.FC<TimelineProps> = ({
   return (
     <div className="glass-panel p-4 rounded-2xl space-y-3 w-full border border-white/10 shadow-2xl">
       {/* Timeline Header Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/5 pb-3 gap-3">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between border-b border-white/5 pb-3 gap-3">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <h3 className="font-bold text-white text-sm flex items-center gap-2">
             <Layers className="h-4 w-4 text-brownie-400" /> Multi-Track Timeline & Video Clipper
           </h3>
@@ -83,7 +83,7 @@ export const Timeline: React.FC<TimelineProps> = ({
         <div className="flex items-center gap-2 text-xs flex-wrap">
           <button
             onClick={onTogglePlay}
-            className="flex items-center gap-1 bg-brownie-500 text-black font-bold px-3 py-1 rounded-lg hover:scale-105 transition-transform"
+            className="flex items-center gap-1.5 bg-brownie-500 hover:bg-brownie-400 text-black font-bold px-3.5 py-1 rounded-lg transition-all shadow-md shadow-brownie-500/10 flex-shrink-0"
           >
             {isPlaying ? <Pause className="h-3.5 w-3.5 fill-black" /> : <Play className="h-3.5 w-3.5 fill-black ml-0.5" />}
             {isPlaying ? 'Pause' : 'Play'}
@@ -92,7 +92,7 @@ export const Timeline: React.FC<TimelineProps> = ({
           <span className="hidden sm:inline w-[1px] h-4 bg-white/10 mx-0.5" />
 
           {/* Quick Clip Presets */}
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-none py-0.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5 flex-wrap">
             <span className="text-white/40 text-[11px] font-mono hidden md:inline mr-1">Rec Clips:</span>
             {CLIP_PRESETS.map((preset) => (
               <button

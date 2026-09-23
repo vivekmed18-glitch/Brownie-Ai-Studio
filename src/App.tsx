@@ -272,25 +272,30 @@ export const App: React.FC = () => {
                   </div>
 
                   {/* Right: Transcript Editor & Quick Style Selector */}
-                  <div className="lg:col-span-5 space-y-6">
-                    <TranscriptEditor
-                      words={words}
-                      currentTime={currentTime}
-                      onTimeSeek={(t) => {
-                        setCurrentTime(t);
-                        setIsPlaying(false);
-                      }}
-                      onUpdateWord={handleUpdateWord}
-                      onDeleteWord={handleDeleteWord}
-                      onToggleHighlight={handleToggleHighlight}
-                      onAddWord={handleAddWord}
-                      onSetCustomTranscript={handleSetCustomTranscript}
-                    />
+                  <div className="lg:col-span-5 flex flex-col gap-4">
+                    <div className="flex-1 min-h-0">
+                      <TranscriptEditor
+                        words={words}
+                        currentTime={currentTime}
+                        onTimeSeek={(t) => {
+                          setCurrentTime(t);
+                          setIsPlaying(false);
+                        }}
+                        onUpdateWord={handleUpdateWord}
+                        onDeleteWord={handleDeleteWord}
+                        onToggleHighlight={handleToggleHighlight}
+                        onAddWord={handleAddWord}
+                        onSetCustomTranscript={handleSetCustomTranscript}
+                      />
+                    </div>
 
                     {/* Compact Style Swapper */}
-                    <div className="glass-panel p-4 rounded-2xl">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-white">Active Style: {currentStyle.name}</span>
+                    <div className="glass-panel p-4 rounded-2xl flex-shrink-0">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                          <span className="h-2 w-2 rounded-full bg-brownie-400"></span>
+                          Active Style: {currentStyle.name}
+                        </span>
                         <button
                           onClick={() => setActiveTab('styles')}
                           className="text-xs text-brownie-400 font-semibold hover:underline"

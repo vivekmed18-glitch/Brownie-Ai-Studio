@@ -10,6 +10,7 @@ import { Timeline } from './components/Timeline';
 import { CAPTION_STYLES, INITIAL_WORDS } from './data/presets';
 import { CaptionStyle, Word } from './types/studio';
 import { aiTranscriber } from './services/aiTranscriber';
+import { trimAndExportVideoClip } from './services/videoCutter';
 import confetti from 'canvas-confetti';
 
 export const App: React.FC = () => {
@@ -50,32 +51,43 @@ export const App: React.FC = () => {
     setIsPlaying(true);
   };
 
-  // Trim video handler - trims clip and triggers direct download to user's Downloads folder
-  const handleTrimVideo = (start: number, end: number) => {
+  // Trim video handler - slices exact sub-clip (e.g. 21s to 147s) and downloads sliced MP4 file
+  const handleTrimVideo = async (start: number, end: number) => {
     setTrimRange({ start, end });
     setCurrentTime(start);
-    
+
     // Filter words within trimmed timeframe
-    const trimmedWords = words.filter(w => w.start >= start && w.end <= end);
-    if (trimmedWords.length > 0) {
-      setWords(trimmedWords);
+    if (words.length > 0) {
+      const trimmedWords = words.filter(w => w.start >= start && w.end <= end);
+      if (trimmedWords.length > 0) {
+        setWords(trimmedWords);
+      }
     }
 
-    // Trigger instant browser download of the cut clip to user's Downloads folder
-    const downloadUrl = videoUrl || '/sample.mp4';
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.download = `BrownieAI_Cut_Clip_${start.toFixed(1)}s_to_${end.toFixed(1)}s.mp4`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (!videoUrl) return;
+    setIsExporting(true);
 
-    // Burst confetti celebration
-    confetti({
-      particleCount: 120,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
+    try {
+      const { blob, fileName } = await trimAndExportVideoClip(videoUrl, start, end);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+      confetti({
+        particleCount: 140,
+        spread: 75,
+        origin: { y: 0.6 }
+      });
+    } catch (err) {
+      console.warn('Video trim slicing notice:', err);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Transcript editing functions
@@ -241,27 +253,35 @@ export const App: React.FC = () => {
     link.click();
   };
 
-  // Export Video handler - triggers direct download to browser Downloads folder
-  const handleExportVideo = () => {
+  // Export Video handler - slices and exports trimmed sub-clip or full video
+  const handleExportVideo = async () => {
+    if (!videoUrl) return;
     setIsExporting(true);
-    setTimeout(() => {
-      setIsExporting(false);
 
-      // Trigger direct file download to user's Downloads folder
-      const downloadUrl = videoUrl || '/sample.mp4';
+    try {
+      const start = trimRange.start || 0;
+      const end = trimRange.end && trimRange.end > start ? trimRange.end : (videoDuration || 10);
+
+      const { blob, fileName } = await trimAndExportVideoClip(videoUrl, start, end);
+      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = `BrownieAI_Clip_${Date.now()}.mp4`;
+      link.href = url;
+      link.download = fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
 
       confetti({
         particleCount: 140,
         spread: 75,
         origin: { y: 0.6 }
       });
-    }, 1500);
+    } catch (err) {
+      console.warn('Video export notice:', err);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (

@@ -1,6 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Word, CaptionStyle } from '../types/studio';
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Maximize, Smartphone, Square, Monitor, Eraser } from 'lucide-react';
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Maximize, Smartphone, Square, Monitor, Eraser, Sparkles } from 'lucide-react';
+import { aiTranscriber } from '../services/aiTranscriber';
 
 interface VideoStageProps {
   videoUrl: string | null;
@@ -34,9 +35,10 @@ export const VideoStage: React.FC<VideoStageProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [isMuted, setIsMuted] = React.useState<boolean>(false);
-  const [hideBurnedInCaptions, setHideBurnedInCaptions] = React.useState<boolean>(false);
-  const [isTranscribing, setIsTranscribing] = React.useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [hideBurnedInCaptions, setHideBurnedInCaptions] = useState<boolean>(false);
+  const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
+  const [transcribeStatus, setTranscribeStatus] = useState<string | null>(null);
 
   // Auto-detect and extract embedded subtitle tracks from video file
   const handleLoadedMetadata = () => {
@@ -102,99 +104,25 @@ export const VideoStage: React.FC<VideoStageProps> = ({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Browser Speech-to-Text Transcriber Engine with Intelligent Auto-Transcribe Fallback
+  // In-Browser Whisper Neural AI Auto-Caption Transcriber Engine
   const handleStartBrowserSpeechRecognition = async () => {
+    if (!videoUrl || !onExtractVideoTextTracks) return;
     setIsTranscribing(true);
-
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.muted = false;
-      setIsMuted(false);
-      videoRef.current.play().catch(() => {});
-    }
-
-    let hasExtractedWords = false;
-
-    // Smart fallback auto-caption generator for video duration
-    const generateFallbackCaptions = () => {
-      if (hasExtractedWords || !onExtractVideoTextTracks) return;
-      hasExtractedWords = true;
-      const vDur = videoRef.current?.duration || (words.length > 0 ? words[words.length - 1].end + 1 : 12);
-      const sampleScript = [
-        "Welcome", "to", "Brownie", "AI", "Studio", "where", "you", "can", "generate", "instant",
-        "viral", "captions", "and", "dynamic", "animations", "for", "Shorts", "and", "Reels", "automatically"
-      ];
-      const wordDur = Math.max(0.25, vDur / sampleScript.length);
-      const generatedWords: Word[] = sampleScript.map((w, i) => ({
-        id: `w_ai_auto_${Date.now()}_${i}`,
-        word: w,
-        start: parseFloat((i * wordDur).toFixed(2)),
-        end: parseFloat(((i + 1) * wordDur).toFixed(2))
-      }));
-      onExtractVideoTextTracks(generatedWords);
-      setIsTranscribing(false);
-    };
-
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      generateFallbackCaptions();
-      return;
-    }
+    setTranscribeStatus('⚡ Initializing Whisper WebGPU AI...');
 
     try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {});
+      const extractedWords = await aiTranscriber.transcribeVideo(videoUrl, (info) => {
+        setTranscribeStatus(info.message);
+      });
+
+      if (extractedWords && extractedWords.length > 0) {
+        onExtractVideoTextTracks(extractedWords);
       }
-
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
-
-      const fallbackTimer = setTimeout(() => {
-        if (!hasExtractedWords) {
-          generateFallbackCaptions();
-        }
-      }, 3500);
-
-      recognition.onresult = (event: any) => {
-        let currentResultText = '';
-        for (let i = 0; i < event.results.length; ++i) {
-          currentResultText += event.results[i][0].transcript + ' ';
-        }
-
-        if (currentResultText.trim() && onExtractVideoTextTracks) {
-          hasExtractedWords = true;
-          clearTimeout(fallbackTimer);
-          const rawWords = currentResultText.trim().split(/\s+/).filter(Boolean);
-          const videoDuration = videoRef.current?.duration || 10;
-          const dur = Math.max(0.18, videoDuration / rawWords.length);
-          const newWords: Word[] = rawWords.map((wStr, i) => ({
-            id: `w_speech_${Date.now()}_${i}`,
-            word: wStr,
-            start: parseFloat((i * dur).toFixed(2)),
-            end: parseFloat(((i + 1) * dur).toFixed(2))
-          }));
-          onExtractVideoTextTracks(newWords);
-        }
-      };
-
-      recognition.onerror = (err: any) => {
-        console.warn('Speech recognition notice:', err.error);
-        clearTimeout(fallbackTimer);
-        generateFallbackCaptions();
-      };
-
-      recognition.onend = () => {
-        clearTimeout(fallbackTimer);
-        setIsTranscribing(false);
-      };
-
-      recognition.start();
-    } catch (e) {
-      console.warn('Speech recognition setup fallback:', e);
-      generateFallbackCaptions();
+    } catch (err) {
+      console.warn('In-browser transcription notice:', err);
+    } finally {
+      setIsTranscribing(false);
+      setTranscribeStatus(null);
     }
   };
 
@@ -518,7 +446,7 @@ const getWordEmoji = (wordStr: string): string | null => {
                 : 'bg-brownie-500/10 text-brownie-400 hover:bg-brownie-500/20 border border-brownie-500/30'
             }`}
           >
-            {isTranscribing ? '⚡ Listening...' : '⚡ Speech AI'}
+            {isTranscribing ? (transcribeStatus || '⚡ Transcribing...') : '⚡ Speech AI'}
           </button>
         )}
 

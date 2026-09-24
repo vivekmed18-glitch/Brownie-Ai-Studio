@@ -9,6 +9,7 @@ import { ToolsSuite } from './components/ToolsSuite';
 import { Timeline } from './components/Timeline';
 import { CAPTION_STYLES, INITIAL_WORDS } from './data/presets';
 import { CaptionStyle, Word } from './types/studio';
+import { aiTranscriber } from './services/aiTranscriber';
 import confetti from 'canvas-confetti';
 
 export const App: React.FC = () => {
@@ -24,7 +25,7 @@ export const App: React.FC = () => {
   const [trimRange, setTrimRange] = useState<{ start: number; end: number }>({ start: 0, end: 10 });
 
   // Handle uploaded video or audio file
-  const handleMediaSelect = (file: File) => {
+  const handleMediaSelect = async (file: File) => {
     const url = URL.createObjectURL(file);
     setVideoUrl(url);
     setCurrentTime(0);
@@ -35,6 +36,15 @@ export const App: React.FC = () => {
     const cleanFileName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
     const defaultCaptionText = `Playing ${cleanFileName}. AI captions automatically synchronized to your video!`;
     handleSetCustomTranscript(defaultCaptionText);
+
+    try {
+      const aiWords = await aiTranscriber.transcribeVideo(file);
+      if (aiWords && aiWords.length > 0) {
+        setWords(aiWords);
+      }
+    } catch (e) {
+      console.warn('Auto transcription notice:', e);
+    }
   };
 
   // Demo fallback clip handler

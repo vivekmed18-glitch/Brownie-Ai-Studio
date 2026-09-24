@@ -280,9 +280,19 @@ export const Timeline: React.FC<TimelineProps> = ({
 
           <button
             onClick={() => onTimeSeek(trimStart)}
-            className="flex items-center gap-1 bg-brownie-500/20 hover:bg-brownie-500/30 text-brownie-400 border border-brownie-500/40 text-xs font-bold px-3 py-1 rounded-lg transition-colors"
+            className="flex items-center gap-1 bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 text-xs font-semibold px-3 py-1 rounded-lg transition-colors"
           >
             Preview Cut Clip
+          </button>
+
+          <button
+            onClick={() => {
+              if (onTrimVideo) onTrimVideo(trimStart, trimEnd);
+              onTimeSeek(trimStart);
+            }}
+            className="flex items-center gap-1.5 bg-brownie-500 hover:bg-brownie-400 text-black font-bold text-xs px-3.5 py-1 rounded-lg transition-all shadow-md shadow-brownie-500/20"
+          >
+            <Scissors className="h-3.5 w-3.5" /> Cut & Apply Trim
           </button>
         </div>
       </div>

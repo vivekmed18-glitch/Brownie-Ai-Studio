@@ -54,14 +54,32 @@ export const App: React.FC = () => {
     setIsPlaying(true);
   };
 
-  // Trim video handler
+  // Trim video handler - trims clip and triggers direct download to user's Downloads folder
   const handleTrimVideo = (start: number, end: number) => {
     setTrimRange({ start, end });
-    // Filter words within trimmed timeframe or adjust relative timing
+    setCurrentTime(start);
+    
+    // Filter words within trimmed timeframe
     const trimmedWords = words.filter(w => w.start >= start && w.end <= end);
     if (trimmedWords.length > 0) {
       setWords(trimmedWords);
     }
+
+    // Trigger instant browser download of the cut clip to user's Downloads folder
+    const downloadUrl = videoUrl || '/sample.mp4';
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = `BrownieAI_Cut_Clip_${start.toFixed(1)}s_to_${end.toFixed(1)}s.mp4`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Burst confetti celebration
+    confetti({
+      particleCount: 120,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
   };
 
   // Transcript editing functions

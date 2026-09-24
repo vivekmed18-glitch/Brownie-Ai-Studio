@@ -14,8 +14,12 @@ class AITranscriberService {
    * Helper to decode and downsample audio from video file or URL into 16kHz Float32Array
    */
   async extractAudioFromMedia(mediaSource: string | File): Promise<Float32Array> {
-    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
-    
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    const audioCtx = new AudioContextClass({ sampleRate: 16000 });
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume().catch(() => {});
+    }
+
     let arrayBuffer: ArrayBuffer;
     if (typeof mediaSource === 'string') {
       const response = await fetch(mediaSource);
@@ -64,12 +68,14 @@ class AITranscriberService {
         'onnx-community/whisper-tiny.en',
         {
           device,
+          dtype: 'fp32',
           progress_callback: (p: any) => {
             if (onProgress && p.status === 'progress') {
+              const pct = Math.round((p.progress || 0) * (p.progress > 1 ? 1 : 100));
               onProgress({
                 status: 'loading',
-                progress: Math.round(p.progress || 20),
-                message: `Downloading Whisper AI Model: ${Math.round(p.progress || 0)}%`
+                progress: Math.min(99, Math.max(10, pct)),
+                message: `Downloading Whisper AI Model: ${pct}%`
               });
             }
           }

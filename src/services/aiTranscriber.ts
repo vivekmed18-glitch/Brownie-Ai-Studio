@@ -159,44 +159,18 @@ class AITranscriberService {
   }
 
   /**
-   * Fallback audio-synced caption generator
+   * Return empty list when no speech is detected
    */
   private generateSmartFallbackWords(duration: number, onProgress?: (info: TranscriptionProgress) => void): Word[] {
     if (onProgress) {
       onProgress({
         status: 'completed',
         progress: 100,
-        message: 'Auto-Captions Generated!'
+        message: 'Transcription complete (no speech detected).'
       });
     }
 
-    const script = [
-      "Welcome", "to", "Brownie", "AI", "Studio", "generate", "instant", "viral",
-      "captions", "and", "dynamic", "animations", "for", "Shorts", "and", "Reels",
-      "automatically", "with", "word", "timing", "and", "custom", "presets"
-    ];
-
-    const totalDur = Math.max(5, duration || 12);
-    const words: Word[] = [];
-    const step = 0.5;
-    let t = 0;
-    let idx = 0;
-
-    while (t < totalDur) {
-      const wStr = script[idx % script.length];
-      const start = parseFloat(t.toFixed(2));
-      const end = parseFloat(Math.min(totalDur, t + step).toFixed(2));
-      words.push({
-        id: `w_auto_${Date.now()}_${words.length}`,
-        word: wStr,
-        start,
-        end
-      });
-      t += step + 0.1;
-      idx++;
-    }
-
-    return words;
+    return [];
   }
 }
 

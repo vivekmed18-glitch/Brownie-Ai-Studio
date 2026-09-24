@@ -815,27 +815,7 @@ export const CAPTION_STYLES: CaptionStyle[] = [
   }
 ];
 
-export const INITIAL_WORDS: Word[] = [
-  { id: 'w1', word: 'Welcome', start: 0.2, end: 0.6 },
-  { id: 'w2', word: 'to', start: 0.65, end: 0.8 },
-  { id: 'w3', word: 'brownieAI', start: 0.85, end: 1.4, isCustomEmphasis: true, highlightColor: '#F59E0B' },
-  { id: 'w4', word: 'Studio!', start: 1.45, end: 1.9 },
-  { id: 'w5', word: 'Create', start: 2.1, end: 2.45 },
-  { id: 'w6', word: 'mind-blowing', start: 2.5, end: 3.1, isCustomEmphasis: true, highlightColor: '#EC4899' },
-  { id: 'w7', word: 'AI', start: 3.15, end: 3.35 },
-  { id: 'w8', word: 'captions', start: 3.4, end: 3.85 },
-  { id: 'w9', word: 'without', start: 3.9, end: 4.25 },
-  { id: 'w10', word: 'manual', start: 4.3, end: 4.65 },
-  { id: 'w11', word: 'keyframes.', start: 4.7, end: 5.2 },
-  { id: 'w12', word: 'Edit', start: 5.5, end: 5.8 },
-  { id: 'w13', word: 'the', start: 5.85, end: 6.0 },
-  { id: 'w14', word: 'transcript,', start: 6.05, end: 6.6 },
-  { id: 'w15', word: 'and', start: 6.65, end: 6.8 },
-  { id: 'w16', word: 'the', start: 6.85, end: 7.0 },
-  { id: 'w17', word: 'words', start: 7.05, end: 7.4 },
-  { id: 'w18', word: 'resync', start: 7.45, end: 7.9, isCustomEmphasis: true, highlightColor: '#10B981' },
-  { id: 'w19', word: 'instantly!', start: 7.95, end: 8.5 }
-];
+export const INITIAL_WORDS: Word[] = [];
 
 export const MOCK_HOOKS: AIHook[] = [
   { id: 'h1', text: "Stop keyframing captions! Here is how brownieAI automates it in 1 click.", score: 98, category: "High Curiosity" },

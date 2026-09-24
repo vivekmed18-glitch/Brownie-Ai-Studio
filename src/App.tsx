@@ -30,12 +30,8 @@ export const App: React.FC = () => {
     setVideoUrl(url);
     setCurrentTime(0);
     setVideoDuration(0);
+    setWords([]); // Reset to empty transcript by default
     setIsPlaying(true);
-
-    // Auto-generate initial smart captions for the uploaded clip
-    const cleanFileName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-    const defaultCaptionText = `Playing ${cleanFileName}. AI captions automatically synchronized to your video!`;
-    handleSetCustomTranscript(defaultCaptionText);
 
     try {
       const aiWords = await aiTranscriber.transcribeVideo(file);

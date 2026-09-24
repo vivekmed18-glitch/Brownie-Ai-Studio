@@ -227,18 +227,27 @@ export const App: React.FC = () => {
     link.click();
   };
 
-  // Export Video simulation with celebration animation
+  // Export Video handler - triggers direct download to browser Downloads folder
   const handleExportVideo = () => {
     setIsExporting(true);
     setTimeout(() => {
       setIsExporting(false);
+
+      // Trigger direct file download to user's Downloads folder
+      const downloadUrl = videoUrl || '/sample.mp4';
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `BrownieAI_Clip_${Date.now()}.mp4`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
       confetti({
-        particleCount: 120,
-        spread: 70,
+        particleCount: 140,
+        spread: 75,
         origin: { y: 0.6 }
       });
-      alert('🎉 Video export completed successfully in 1080p vertical format!');
-    }, 2500);
+    }, 1500);
   };
 
   return (

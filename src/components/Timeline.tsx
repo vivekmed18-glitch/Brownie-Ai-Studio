@@ -82,9 +82,6 @@ export const Timeline: React.FC<TimelineProps> = ({
   const handleApplyPresetTrim = (start: number, end: number) => {
     setTrimStart(start);
     setTrimEnd(end);
-    if (onTrimVideo) {
-      onTrimVideo(start, end);
-    }
     onTimeSeek(start);
   };
 

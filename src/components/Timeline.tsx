@@ -250,7 +250,6 @@ export const Timeline: React.FC<TimelineProps> = ({
               onChange={(e) => {
                 const val = Math.max(0, parseFloat(e.target.value) || 0);
                 setTrimStart(val);
-                if (onTrimVideo) onTrimVideo(val, trimEnd);
               }}
               className="w-16 bg-black/60 border border-white/10 rounded px-2 py-1 text-xs text-white font-mono font-bold outline-none focus:border-brownie-500"
             />
@@ -269,7 +268,6 @@ export const Timeline: React.FC<TimelineProps> = ({
               onChange={(e) => {
                 const val = Math.min(effectiveDuration, parseFloat(e.target.value) || effectiveDuration);
                 setTrimEnd(val);
-                if (onTrimVideo) onTrimVideo(trimStart, val);
               }}
               className="w-16 bg-black/60 border border-white/10 rounded px-2 py-1 text-xs text-white font-mono font-bold outline-none focus:border-brownie-500"
             />
